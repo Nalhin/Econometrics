@@ -1,7 +1,11 @@
 import pandas as pd
 
-from .parse_dataset import parse_dataset
+from .ols_model import OLS
 
-df_initial = pd.read_csv("./data/listings_summary.csv")
+ols = OLS(pd.read_csv("../data/listings_summary.csv"))
 
-parse_dataset(df_initial)
+ols.clean_data()
+ols.calculate_models()
+
+if __name__ == "__main__":
+    ols.output_latex()

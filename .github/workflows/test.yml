@@ -1,0 +1,53 @@
+name: Test
+
+on: [push]
+
+jobs:
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup Python
+              uses: actions/setup-python@v1
+              with:
+                  python-version: '3.x'
+            - name: Restore cache
+              uses: actions/cache@v1
+              with:
+                  path: .venv
+                  key: venv-${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+            - name: Install dependencies
+              run: |
+                  pip install poetry
+                  poetry install
+            - name: Run Python tests
+              run: make lint
+
+    unit-test:
+        name: Unit tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup Python
+              uses: actions/setup-python@v1
+              with:
+                  python-version: '3.x'
+            - name: Restore cache
+              uses: actions/cache@v1
+              with:
+                  path: .venv
+                  key: venv-${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+            - name: Install dependencies
+              run: |
+                  pip install poetry
+                  poetry install
+            - name: Run Python tests
+              run: |
+                  make test
+                  make test_coverage
+                  poetry run coverage xml
+            - name: Upload coverage
+              uses: codecov/codecov-action@v1
+              env:
+                  CI: true

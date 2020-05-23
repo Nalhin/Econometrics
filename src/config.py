@@ -26,3 +26,5 @@ CORR_MATRIX_COLUMNS = [
 ]
 
 OUTPUT_PATH = "latex/generated"
+
+P_VALUE_THRESHOLD = 0.05
