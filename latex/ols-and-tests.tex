@@ -1,0 +1,58 @@
+\section{Metoda najmniejszych kwadratów (MNK)}\label{sec:mnk}
+
+\subsection{Opis}\label{subsec:opis}
+Metoda najmniejszych kwadratów służy do estymacji parametrów w modelu ekonometrycznym.
+
+\[ \alpha = (X^{T}X)^{-1}X^{T}y \]
+
+\subsection{Założenia MNK}\label{subsec:założenia-mnk}
+
+\begin{itemize}
+    \item Zmienne objaśniające są nielosowe i nieskorelowane ze składnikiem losowym
+    \item \[E(\epsilon) = 0\]
+    \item \[Var(\epsilon) = \sigma^2 \iota\]
+    \item \[rank(X) = (k+1) <n\]
+\end{itemize}
+
+\subsection{Twierdzenie Gaussa-Markowa}\label{subsec:twierdzenie-gaussa-markowa}
+Przy spełnieniu założeń MNK estymator jest BLUE
+\begin{itemize}
+    \item \textbf{B}est
+    \item \textbf{L}inear
+    \item \textbf{U}nbiased
+    \item \textbf{E}stimator
+\end{itemize}
+
+\section {Poprawnośc statystyczna modelu}\label{sec:testy-statystyczne-modelu}
+
+\subsection{Koincydentność}\label{subsec:koincydentność}
+
+\subsection{Występowanie efektu katalizy}\label{subsec:występowanie-efektu-katalizy}
+
+Mówimy, że w modelu ekonometrycznym określonym przez regularną
+parę korelacyjną (R, \(R_0\)) występuje efekt katalizy, jeżeli istnieje taka
+para wskaźników (i, j), dla której
+
+\[ r_{ij} < 0 \; lub \; r_{ij}  > \frac{r_i}{r_j} \]
+
+Nateżenie efektu katalizy mierzymy wzorem
+
+\[ \eta = R^2 - H \]
+
+Gdzie H oznacza integralną pojemność informacyjną zmiennych objaśniających
+
+\subsection{Istotność współczynnika determinacji}\label{subsec:istotność-współczynnika-determinacji}
+
+\subsection{Istotność statystyczna pojedyńczych zmiennych objaśniających}\label{subsec:istotność-statystyczna-zmiennych-objaśniających}
+Jeżeli spełnione jest założenie o normalności reszt, to możemy postawić następujące hipotezę
+
+\begin{equation}
+    \begin{split}
+        H_0: \alpha_j = 0 \\
+        H_1: \alpha_j \ne 0
+    \end{split}
+\end{equation}
+
+Statystyka t ma postać \(t = \frac{\alpha j}{S_{\alpha j}}\).
+Jeżeli \(|t| > t_{n -(k+1)}\) to odrzucamy \(H_0\).
+Oznacza to brak wplywu zmiennej \(X_j\) na Y.

@@ -1,4 +1,7 @@
+import math
+
 import pandas as pd
+from scipy import stats
 from sklearn.model_selection import train_test_split
 from .config import MODEL_COLUMNS
 from .parse_dataset import (
@@ -11,38 +14,85 @@ from .plotter import Plotter
 from .summarizer import Summarizer
 import numpy as np
 
+from .test_results import (
+    CatalysisTestResult,
+    SignificanceOfVariablesTestResult,
+)
+
+
+def sign(x):
+    return math.copysign(1, x)
+
+
+def t_test_pvalue(stat, df):
+    return stats.t.sf(abs(stat), df=df) * 2
+
 
 class OLSModel:
     def __init__(self, x, y):
         self.x = np.array(x)
+        self.x_const = np.insert(self.x, 0, values=1, axis=1)
         self.y = np.array(y)
         self.col_names = x.columns
-        self.a = []
+        self.col_names_const = np.insert(
+            self.col_names, 0, values="const", axis=0
+        )
         self.k = len(self.x[0])
         self.n = len(self.x)
+        self.a = None
         self.rsquare = 0
         self.rsquare_adjusted = 0
-
-    def catalyst_effect(self):
-        pass
-
-    def add_const(self):
-        self.x = np.insert(self.x, 0, values=1, axis=1)
-        self.col_names = np.insert(self.col_names, 0, "const", axis=0)
+        self.s_squared = 0
+        self.d_squared = None
 
     def fit(self):
-        self.add_const()
-        x_t = np.transpose(self.x)
-        self.a = np.linalg.inv(x_t @ self.x) @ (x_t @ self.y)
-        y_hat = self.x @ self.a
-        self.rsquare = 1 - (
-            ((self.y - y_hat) ** 2).sum()
-            / ((self.y - self.y.mean()) ** 2).sum()
-        )
+
+        x_t = np.transpose(self.x_const)
+        x_t_x_inverse = np.linalg.inv(x_t @ self.x_const)
+        self.a = x_t_x_inverse @ (x_t @ self.y)
+
+        y_hat = self.x_const @ self.a
+        e_t_e = ((self.y - y_hat) ** 2).sum()
+
+        self.rsquare = 1 - (e_t_e / ((self.y - self.y.mean()) ** 2).sum())
+
         self.rsquare_adjusted = self.rsquare - (
             self.k / (self.n - self.k - 1)
         ) * (1 - self.rsquare)
 
+        self.s_squared = e_t_e / (self.n - self.k - 1)
+        self.d_squared = self.s_squared * x_t_x_inverse
+
+    def catalysis_effect(self):
+        r = np.corrcoef(self.x.transpose())
+        r_0 = [np.corrcoef(self.x[:, i], self.y)[1][0] for i in range(self.k)]
+        pairs = []
+        for i in range(self.k):
+            for j in range(self.k):
+                if abs(r_0[i]) < abs(r_0[j]):
+                    r_ij = r[i, j] * sign(r_0[i]) * sign(r_0[j])
+                    if r_ij > (abs(r_0[i]) / abs(r_0[j])) or r_ij < 0:
+                        pairs.append((self.col_names[i], self.col_names[j]))
+
+        return CatalysisTestResult(pairs)
+
+    def statistical_significance_of_parameters(self):
+        results = []
+        for i in range(self.k + 1):
+            s_a = math.sqrt(self.d_squared[i, i])
+            a_j = self.a[i]
+
+            t_calculated = a_j / s_a
+            pvalue = t_test_pvalue(t_calculated, df=self.n - self.k - 1)
+            results.append(
+                dict(
+                    pvalue=pvalue,
+                    variable=self.col_names_const[i],
+                    tstat=t_calculated,
+                )
+            )
+
+        return SignificanceOfVariablesTestResult(results)
 
 
 class OLS:

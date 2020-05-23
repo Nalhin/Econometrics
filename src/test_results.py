@@ -24,13 +24,13 @@ class PValueTestResult(TestResult):
 
 
 class CatalysisTestResult(TestResult):
-    def __init__(self, catalysis):
+    def __init__(self, catalysis_pairs):
         super().__init__("Catalysis effect")
-        self.catalysis = catalysis
+        self.catalysis_pairs = catalysis_pairs
 
     @property
     def is_passing(self):
-        return not len(self.catalysis)
+        return not len(self.catalysis_pairs)
 
 
 class SignificanceOfVariablesTestResult(TestResult):
@@ -40,31 +40,26 @@ class SignificanceOfVariablesTestResult(TestResult):
 
     @property
     def is_passing(self):
-        for var in self.variables:
-            if var["pvalue"] < P_VALUE_THRESHOLD:
-                return False
-        return True
+        return all(p["pvalue"] < P_VALUE_THRESHOLD for p in self.variables)
 
+    class CoincidenceTestResult(TestResult):
+        def __init__(self, coincidence):
+            super().__init__(name="Coincidence")
+            self.coincidence = coincidence
 
-class CoincidenceTestResult(TestResult):
-    def __init__(self, coincidence):
-        super().__init__(name="Coincidence")
-        self.coincidence = coincidence
+        @property
+        def is_passing(self):
+            for var in self.coincidence:
+                if not var["passing"]:
+                    return False
 
-    @property
-    def is_passing(self):
-        for var in self.coincidence:
-            if not var["passing"]:
-                return False
+            return True
 
-        return True
+    class CustomTestResult(TestResult):
+        def __init__(self, name, successful):
+            super().__init__(name)
+            self.successful = successful
 
-
-class CustomTestResult(TestResult):
-    def __init__(self, name, successful):
-        super().__init__(name)
-        self.successful = successful
-
-    @property
-    def is_passing(self):
-        return self.successful
+        @property
+        def is_passing(self):
+            return self.successful
