@@ -1,7 +1,17 @@
-.PHONY:
+.PHONY: run latex format lint make-all
 
 run:
-	poetry run python src/root.py
+	poetry run python -m src
 
-generate:
-	poetry run python src/generate.py
+latex:
+	cd ./latex && xelatex -output-directory=../output root.tex
+
+format:
+	poetry run black src
+
+lint:|
+	poetry run flake8
+	poetry run black src --check
+
+all:
+	make run && make latex

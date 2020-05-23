@@ -1,0 +1,130 @@
+\section{Opis danych}\label{sec:opis-danych}
+
+\subsection{Pochodzenie}\label{subsec:pochodzenie}
+Dane pochodzą z serwisu Keggle\cite{berlin-airbnb-data}.
+Zostały one zebrane na podstawie ofert wystawionych na serwisie Airbnb dnia 7 listopada 2018 roku.
+Pozyskiwanie danych do zbioru odbyło się za pomocom technologi do webscrappingu.
+Proces ten polega na pobraniu kodu HTML strony internetowej i przeparsowanie odpowiednich znaczników do postaci pliku csv.
+Z uwagi na specyfikacje serwisu Airbnb, niektóre oferty mogą zawierać nieprawdziwe dane.
+Skrajne i typowo bezsensowne wartości zostaną usunięte i nie beda prane pod uwagę przy dalszej analizie.
+
+\subsection{Zmienne}\label{subsec:zmienne}
+
+\customplot{CorrMatrix}{Macierz korelacji zmiennych}{corr-matrix}
+
+\subsubsection{Price}\label{subsubsec:price}
+Zmienna objaśniana w modelu.
+Jest to cena za wynajem (w dolarach) na okres jednej doby.
+Zmienne z wartościami zerowymi i abstrakcyjnie dużymi wartościami (siegające nawet 900\$) zostały uznane za outliery, a następnie usunięte z modelu.
+Jako górna granice uznałem 500 \$.
+W ten sposób z modelu zostały usunięte 82 obserwacje.
+
+
+\customtable{Price}
+\customboxplot{Price}
+
+Wnioski
+
+\begin{itemize}
+    \item Z uwagi na wysoką dodatnią wartość skośności, jak rożnież różnic miedzy średnia, a mediana, można zauważyć, ze wykres jest mocno przsunięty w prawo, a zatem zawiera skrajnie wysokie wartości
+    \item Wysoka kurtoza może oznaczać występowanie dodatnich outlierow (widoczne na wykresie), jednak z uwagi na specyfikacje zmiennej (na Airbnb można wynajmować nawet apartamenty), takowe nie bedą usuwane.
+    \item Zmienna ma wariacje na wysokim poziomie, może to wynikać z dużych róznic ceny mieszkań zależnie od ich wielkości (i ilości osób mogących się w takowym zmieścić).
+\end{itemize}
+
+\subsubsection{Number of Reviews}\label{subsubsec:number-of-reviews}
+Zmienna objaśniająca w modelu.
+
+\customtable{NumberOfReviews}
+
+\customboxplot{NumberOfReviews}
+
+Wnioski
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+
+\subsubsection{Minimum nights}\label{subsubsec:minimum-nights}
+Zmienna objaśniająca w modelu.
+
+\customtable{MinimumNights}
+
+\customboxplot{MinimumNights}
+
+Wnioski
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+\subsubsection{Bathrooms}\label{subsubsec:bathrooms}
+Zmienna objaśniająca w modelu.
+
+\customtable{Bathrooms}
+
+\customboxplot{Bathrooms}
+
+Wnioski
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+\subsubsection{Bedrooms}\label{subsubsec:bedrooms}
+Zmienna objaśniająca w modelu.
+
+\customtable{Bedrooms}
+
+\customboxplot{Bedrooms}
+
+Wnioski
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+\subsubsection{Availability 365}\label{subsubsec:availability-365}
+Zmienna objaśniająca w modelu.
+
+\customtable{Availability365}
+\customboxplot{Availability365}
+
+Wnioski
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+\subsubsection{Accommodates}\label{subsubsec:accommodates}
+Zmienna objaśniająca w modelu.
+
+\customtable{Accommodates}
+
+\customboxplot{Accommodates}
+
+Wnioski
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+\subsubsection{Distance from Center}\label{subsubsec:distance-from-center}
+Zmienna objaśniająca w modelu.
+
+\customplot{DistanceFromCenterPlot}{Rozkład ofert względem centrum miasta}{rozkład-polożenia}
+
+\customtable{DistanceFromCenter}
+
+\customboxplot{DistanceFromCenter}
+
+Wnioski
+
+\begin{itemize}
+    \item
+\end{itemize}
+
+\subsubsection{Room Type}\label{subsubsec:room-type}
+Zmienna objaśniająca w modelu.
+
+\custompiechart{RoomType}

@@ -1,0 +1,46 @@
+\newcommand{\customboxplot}[1]{
+    \begin{figure}[H]
+%        \advance\leftskip-2cm
+        \center
+        \import{generated/}{#1BoxPlot.pgf}
+        \caption{Wykres pudelkowy zmiennej \textbf{#1}}
+        \label{fig:box-plot-#1}
+    \end{figure}
+}
+
+\newcommand{\custompiechart}[1]{
+    \begin{figure}[H]
+        \import{generated/}{#1PieChart.pgf}
+        \caption{Diagram kołowy zmiennej \textbf{#1}}
+        \label{fig:pie-chart-#1}
+    \end{figure}
+}
+
+\newcommand{\customplot}[3]{
+    \begin{figure}[H]
+%        \advance\leftskip-2cm
+%        \center
+        \import{generated/}{#1.pgf}
+        \caption{#2}
+        \label{fig:plot-#3}
+    \end{figure}
+}
+
+\newcommand{\customtable}[1]{
+    \import{generated/}{#1Table.tex}
+}
+
+\newcommand{\variabletable}[2]{
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{ |p{3cm}|p{3cm}|}
+            \hline
+            \multicolumn{2}{|c|}{#1} \\
+            \hline
+            #2
+            \hline
+        \end{tabular}
+        \caption{Statystyki opisowe zmiennej #1}
+        \label{tab:summary-#1}
+    \end{table}
+}

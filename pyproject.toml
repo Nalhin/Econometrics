@@ -9,9 +9,16 @@ python = "^3.8"
 pandas = "^1.0.3"
 numpy = "^1.18.4"
 matplotlib = "^3.2.1"
-jinja2 = "^2.11.2"
+mako = "^1.1.2"
+seaborn = "^0.10.1"
+geopy = "^1.22.0"
 
 [tool.poetry.dev-dependencies]
+black = "^19.10b0"
+flake8 = "^3.8.1"
+
+[tool.black]
+line-length = 79
 
 [build-system]
 requires = ["poetry>=0.12"]

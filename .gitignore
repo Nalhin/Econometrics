@@ -1,3 +1,7 @@
 data
 output
 .idea
+latex/generated/
+src/__pycache__/
+latex/templates/
+latex/generated
