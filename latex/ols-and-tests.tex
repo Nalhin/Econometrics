@@ -33,7 +33,9 @@ Mówimy, że w modelu ekonometrycznym określonym przez regularną
 parę korelacyjną (R, \(R_0\)) występuje efekt katalizy, jeżeli istnieje taka
 para wskaźników (i, j), dla której
 
-\[ r_{ij} < 0 \; lub \; r_{ij}  > \frac{r_i}{r_j} \]
+\begin{equation}
+    r_{ij} < 0 \; lub \; r_{ij}  > \frac{r_i}{r_j}
+\end{equation}
 
 Nateżenie efektu katalizy mierzymy wzorem
 
@@ -42,6 +44,19 @@ Nateżenie efektu katalizy mierzymy wzorem
 Gdzie H oznacza integralną pojemność informacyjną zmiennych objaśniających
 
 \subsection{Istotność współczynnika determinacji}\label{subsec:istotność-współczynnika-determinacji}
+
+Test ten pozwala sprawdzić istotność wszystkich zmiennych w modelu naraz.
+
+\begin{equation}
+    \begin{split}
+        H_0: \alpha_1 = \alpha_2 = \; \dots \; = \alpha_k = 0 \\
+        H_1: \alpha_1 \; lub \; \alpha_2 \ne \; lub \; \dots \; lub \; \alpha_k \ne 0
+    \end{split}
+\end{equation}
+
+Statystyka F-Snedachora ma postać \(F = \frac{R^2}{k} \frac{n-k-1}{1-R^2}\) o \(r_1 = k\) i \(r_2 = n-k-1\) stopniach swobody.
+Jeżeli \(F > F_\alpha,r1,r2 \) to odrzucamy \(H_0\).
+Oznacza to, że przynajmniej jedna zmienna objaśniająca jest statystycznie ważna w modelu.
 
 \subsection{Istotność statystyczna pojedyńczych zmiennych objaśniających}\label{subsec:istotność-statystyczna-zmiennych-objaśniających}
 Jeżeli spełnione jest założenie o normalności reszt, to możemy postawić następujące hipotezę

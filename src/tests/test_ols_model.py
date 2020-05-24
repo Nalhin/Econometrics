@@ -9,12 +9,12 @@ from ..ols_model import OLSModel
 
 class TestModel(unittest.TestCase):
     def setUp(self):
-        df = pd.read_csv(
+        self.df = pd.read_csv(
             f"{os.path.dirname(os.path.abspath(__file__))}/ols_fixture.csv",
             sep=" ",
         )
-        y = df.pop("q")
-        self.model = OLSModel(df, y)
+        self.y = self.df.pop("q")
+        self.model = OLSModel(self.df, self.y)
 
     def test_fit_calculates_predicted_parameters(self):
         self.model.fit()
@@ -48,3 +48,18 @@ class TestModel(unittest.TestCase):
 
         self.assertAlmostEqual(0.3046, result.variables[2]["pvalue"], places=4)
         self.assertFalse(result.is_passing)
+
+    def test_r_squared_significance_high_palue(self):
+        model = OLSModel(self.df[["pr"]], self.y)
+        model.fit()
+
+        result = model.r_squared_significance()
+
+        self.assertAlmostEqual(0.014102, result.pvalue, places=4)
+
+    def test_r_squared_significance_low_pvalue(self):
+        self.model.fit()
+
+        result = self.model.r_squared_significance()
+
+        self.assertAlmostEqual(0, result.pvalue, places=4)

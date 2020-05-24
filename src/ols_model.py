@@ -17,6 +17,7 @@ import numpy as np
 from .test_results import (
     CatalysisTestResult,
     SignificanceOfVariablesTestResult,
+    PValueTestResult,
 )
 
 
@@ -24,8 +25,12 @@ def sign(x):
     return math.copysign(1, x)
 
 
-def t_test_pvalue(stat, df):
+def t_pvalue(stat, df):
     return stats.t.sf(abs(stat), df=df) * 2
+
+
+def f_pvalue(stat, df):
+    return stats.f.sf(stat, dfn=df[0], dfd=df[1])
 
 
 class OLSModel:
@@ -83,7 +88,7 @@ class OLSModel:
             a_j = self.a[i]
 
             t_calculated = a_j / s_a
-            pvalue = t_test_pvalue(t_calculated, df=self.n - self.k - 1)
+            pvalue = t_pvalue(t_calculated, df=self.n - self.k - 1)
             results.append(
                 dict(
                     pvalue=pvalue,
@@ -93,6 +98,15 @@ class OLSModel:
             )
 
         return SignificanceOfVariablesTestResult(results)
+
+    def r_squared_significance(self):
+        f_calculated = (
+            (self.rsquare / self.k)
+            * (self.n - self.k - 1)
+            / (1 - self.rsquare)
+        )
+        p_value = f_pvalue(f_calculated, df=(self.k, self.n - self.k - 1))
+        return PValueTestResult("The significance of r squared", p_value)
 
 
 class OLS:
