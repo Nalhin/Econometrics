@@ -9,8 +9,8 @@ Metoda najmniejszych kwadratów służy do estymacji parametrów w modelu ekonom
 
 \begin{itemize}
     \item Zmienne objaśniające są nielosowe i nieskorelowane ze składnikiem losowym
-    \item \[E(\epsilon) = 0\]
-    \item \[Var(\epsilon) = \sigma^2 \iota\]
+    \item \[E(\varepsilon) = 0\]
+    \item \[Var(\varepsilon) = \sigma^2 \iota\]
     \item \[rank(X) = (k+1) <n\]
 \end{itemize}
 
@@ -46,7 +46,7 @@ Gdzie H oznacza integralną pojemność informacyjną zmiennych objaśniających
 Mowimy, że zmienna jest koincydentna, jeżeli:
 
 \begin{equation}
-    signr_1 = signa_i
+    sgn(r_1) = sign(a_i)
 \end{equation}
 
 Koincydencja jest zjawiskiem porządanym w modelu.
@@ -75,16 +75,18 @@ Test Jarque-Bera polega na obliczeniu skośności oraz kurtozy w modelu i porów
 
 \begin{equation}
     \begin{split}
-        &H_0: \epsilon \sim N(0,\sigma) \\
-        &H_1: \epsilon \not\sim N(0,\sigma)
+        &H_0: \varepsilon \sim N(0,\sigma) \\
+        &H_1: \varepsilon \not\sim N(0,\sigma)
     \end{split}
 \end{equation}
 
+Statystyke testową wyznaczamy ze wzoru:
 
 \begin{equation}
     JB = n (\frac{1}{6}B_1 + \frac{1}{24}(B_2 -3)^2)
 \end{equation}
-gdzie
+
+Gdzie:
 
 \begin{equation}
     \begin{split}
@@ -115,11 +117,46 @@ Jeżeli spełnione jest założenie o normalności reszt, to możemy postawić n
 
 \begin{equation}
     \begin{split}
-        H_0: \alpha_j = 0 \\
-        H_1: \alpha_j \ne 0
+        &H_0: \alpha_j = 0 \\
+        &H_1: \alpha_j \ne 0
     \end{split}
 \end{equation}
 
 Statystyka t ma postać \(t = \frac{\alpha j}{S_{\alpha j}}\).
 Jeżeli \(|t| > t_{n -(k+1)}\) to odrzucamy \(H_0\).
 Oznacza to brak wplywu zmiennej \(X_j\) na Y.
+
+\subsection{Liniowość modelu - test liczby serii}\label{subsec:liniowość-modelu---test-liczby-serii}
+
+\begin{equation}
+    \begin{split}
+        &H_0: postać \; modelu \; jest \; liniowa \\
+        &H_1: postać \; modelu \; nie \; jest \; liniowa
+    \end{split}
+\end{equation}
+
+Reszty modelu należy ułożyć wzgledem posortowanej rosnąco zmiennej objaśnianej, a następnie policzyć dla nich ilość serii.
+Pod pojęciem serii rozumiemy każdy ciąg elementów o identycznych znakach.
+
+\begin{equation}
+    \begin{split}
+        &\mu = \frac{2N_+ N_-}{N} +1 \\
+        &\sigma^2 = \frac{(\mu -1)(\mu-2)}{N-1} \\
+        &Z = \frac{R - \mu}{\sigma}
+    \end{split}
+\end{equation}
+
+
+Gdzie
+
+\begin{equation}
+    \begin{split}
+        &N_+ - ilość dodatnich elementów \\
+        &N_- - ilość ujemnych elementów \\
+        &N - ilość elementów \\
+        &R - ilość serii \\
+    \end{split}
+\end{equation}
+
+
+Jeżeli \(|Z| > Z_{1-\alpha/2}\) to odrzucamy \(H_0\).

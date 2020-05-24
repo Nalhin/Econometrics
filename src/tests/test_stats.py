@@ -1,6 +1,11 @@
 import unittest
 
-from src.ols_model import f_pvalue, t_pvalue, chi_square_pvalue
+from src.ols_model import (
+    f_pvalue,
+    t_pvalue,
+    chi_square_pvalue,
+    z_score_pvalue,
+)
 
 
 class TestModel(unittest.TestCase):
@@ -27,3 +32,10 @@ class TestModel(unittest.TestCase):
         result = chi_square_pvalue(chi_square_stat, df)
 
         self.assertAlmostEqual(0.817652, result, places=4)
+
+    def test_z_score_pvalue(self):
+        z_score = 1.21
+
+        result = z_score_pvalue(z_score)
+
+        self.assertAlmostEqual(0.226279, result, places=4)

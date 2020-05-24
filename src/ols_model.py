@@ -1,4 +1,5 @@
 import math
+from operator import itemgetter
 
 import pandas as pd
 from scipy import stats
@@ -38,6 +39,20 @@ def chi_square_pvalue(stat, df):
     return stats.chi2.sf(stat, df)
 
 
+def z_score_pvalue(z_score):
+    return stats.norm.sf(abs(z_score)) * 2
+
+
+def count_runs_series(series):
+    prev_sign = sign(series[0])
+    n = 1
+    for i in series:
+        if sign(i) != prev_sign:
+            n += 1
+            prev_sign = sign(i)
+    return n
+
+
 class OLSModel:
     def __init__(self, x, y):
         self.x = np.array(x)
@@ -68,6 +83,7 @@ class OLSModel:
         self.rsquare_adjusted = self.rsquare - (
             self.k / (self.n - self.k - 1)
         ) * (1 - self.rsquare)
+
         self.s_squared = e_t_e / (self.n - self.k - 1)
         self.d_squared = self.s_squared * x_t_x_inverse
 
@@ -128,6 +144,22 @@ class OLSModel:
         jb = self.n * ((b_1 / 6) + ((b_2 - 3) ** 2) / 24)
         p_value = chi_square_pvalue(jb, df=2)
         return PValueTestResult("JB test", p_value)
+
+    def runs_test(self):
+        sorted_residuals = [
+            zipped[0]
+            for zipped in sorted(
+                zip(self.residuals, self.y), key=itemgetter(1)
+            )
+        ]
+        n_plus = (np.array(sorted_residuals) >= 0).sum()
+        n_minus = (np.array(sorted_residuals) <= 0).sum()
+        n_runs = count_runs_series(sorted_residuals)
+        mu = ((2 * n_plus * n_minus) / self.n) + 1
+        sigma = math.sqrt(((mu - 1) * (mu - 2)) / (self.n - 1))
+        z_score = (n_runs - mu) / sigma
+        p_value = z_score_pvalue(z_score)
+        return PValueTestResult("Runs test", p_value)
 
 
 class OLS:
