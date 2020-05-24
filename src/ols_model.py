@@ -4,6 +4,7 @@ from operator import itemgetter
 import pandas as pd
 from scipy import stats
 from sklearn.model_selection import train_test_split
+
 from .config import MODEL_COLUMNS
 from .parse_dataset import (
     add_distance_from_center,
@@ -58,7 +59,7 @@ class OLSModel:
         self.x = np.array(x)
         self.x_const = np.insert(self.x, 0, values=1, axis=1)
         self.y = np.array(y)
-        self.col_names = x.columns
+        self.col_names = x.columns if hasattr(x, "columns") else np.empty(len(self.x[0]), dtype=np.string_)
         self.col_names_const = np.insert(
             self.col_names, 0, values="const", axis=0
         )
@@ -68,6 +69,7 @@ class OLSModel:
         self.rsquare = 0
         self.rsquare_adjusted = 0
         self.s_squared = 0
+        self.ssr = 0
         self.d_squared = None
         self.residuals = None
 
@@ -75,16 +77,15 @@ class OLSModel:
         x_t = np.transpose(self.x_const)
         x_t_x_inverse = np.linalg.inv(x_t @ self.x_const)
         self.a = x_t_x_inverse @ (x_t @ self.y)
-
         y_hat = self.x_const @ self.a
         self.residuals = self.y - y_hat
-        e_t_e = (self.residuals ** 2).sum()
-        self.rsquare = 1 - (e_t_e / ((self.y - self.y.mean()) ** 2).sum())
+        self.ssr = np.dot(self.residuals, self.residuals)
+        self.rsquare = 1 - (self.ssr / ((self.y - self.y.mean()) ** 2).sum())
         self.rsquare_adjusted = self.rsquare - (
-            self.k / (self.n - self.k - 1)
+                self.k / (self.n - self.k - 1)
         ) * (1 - self.rsquare)
 
-        self.s_squared = e_t_e / (self.n - self.k - 1)
+        self.s_squared = self.ssr / (self.n - self.k - 1)
         self.d_squared = self.s_squared * x_t_x_inverse
 
     def catalysis_effect(self):
@@ -130,15 +131,15 @@ class OLSModel:
 
     def r_squared_significance(self):
         f_calculated = (
-            (self.rsquare / self.k)
-            * (self.n - self.k - 1)
-            / (1 - self.rsquare)
+                (self.rsquare / self.k)
+                * (self.n - self.k - 1)
+                / (1 - self.rsquare)
         )
         p_value = f_pvalue(f_calculated, df=(self.k, self.n - self.k - 1))
         return PValueTestResult("The significance of r squared", p_value)
 
     def jarque_bera_test(self):
-        s_dash = math.sqrt((self.residuals ** 2).sum() / self.n)
+        s_dash = math.sqrt(self.ssr / self.n)
         b_1 = ((self.residuals ** 3).sum() / (self.n * (s_dash ** 3))) ** 2
         b_2 = (self.residuals ** 4).sum() / (self.n * (s_dash ** 4))
         jb = self.n * ((b_1 / 6) + ((b_2 - 3) ** 2) / 24)
@@ -160,6 +161,22 @@ class OLSModel:
         z_score = (n_runs - mu) / sigma
         p_value = z_score_pvalue(z_score)
         return PValueTestResult("Runs test", p_value)
+
+    def chow_test(self):
+        x_1, x_2 = np.vsplit(self.x, 2)
+        y_1, y_2 = np.split(self.y, 2)
+        ols_1 = OLSModel(x_1, y_1)
+        ols_2 = OLSModel(x_2, y_2)
+        ols_1.fit()
+        ols_2.fit()
+        rsk_1 = ols_1.ssr
+        rsk_2 = ols_2.ssr
+        rsk = self.ssr
+        r_1 = self.k + 1
+        r_2 = self.n - 2 * (self.k + 1)
+        f_stat = ((rsk - rsk_1 - rsk_2) / (rsk_1 + rsk_2)) * (r_2 / r_1)
+        p_value = f_pvalue(f_stat, df=(r_1, r_2))
+        return PValueTestResult("Chow test", p_value)
 
 
 class OLS:

@@ -160,3 +160,44 @@ Gdzie
 
 
 Jeżeli \(|Z| > Z_{1-\alpha/2}\) to odrzucamy \(H_0\).
+
+\subsection{Stabilność parametrów modelu - test Chowa}\label{subsec:stabilność-parametrów-modelu}
+
+Do sprawdzenia stabilności parametrów modelu można wykorzystać test Chowa.
+
+\begin{equation}
+    \begin{split}
+        &H_0: parametry \;  modelu \; są \; stabilne \\
+        &H_1: parametry \;  modelu \; nie \; są \; stabilne
+    \end{split}
+\end{equation}
+
+Obserwacje wykorzystane przy wyznaczaniu MNK dzielimy na 2 podgrupy.
+
+\begin{equation}
+    \begin{split}
+        &y_t = \beta_0 + \beta_{1}x_{1t} + \dots + \beta_{k}x_{kt} + \varepsilon_{1t}, \;  t= 1,2, \dots , n_1  \\
+        &y_t = \gamma_0 + \gamma_{1}x_{1t} + \dots + \gamma_{k}x_{kt} + \varepsilon_{1t}, \;  t= n_1,n_1 +1, \dots , n
+    \end{split}
+\end{equation}
+
+Następnie wyznaczamy statystyke F.
+
+\begin{equation}
+    \begin{split}
+        F = \frac{RSK - (RSK_I - RSK_{II})}{(RSK_{II}  + RSK_{II})} \frac{n-2(k+1)}{n+1}
+    \end{split}
+\end{equation}
+
+Gdzie
+
+\begin{equation}
+    \begin{split}
+        &RSK = \sum_{t=1}^{n} e_{t}^{2} \\
+        &RSK_{I} = \sum_{t=1}^{n_1} e_{t}^{2} \\
+        &RSK_{II} = \sum_{t=n_1}^{n} e_{t}^{2}
+    \end{split}
+\end{equation}
+
+Statystyka F ma rozkład F-Snedachora z \(r_1=k+1 \) i \(r_2= n -2(k+1) \) stopniami swobody.
+Jeżeli \( F > F_{\alpha,r_1,r_2} \) to odrzucamy \(H_{0}\).
