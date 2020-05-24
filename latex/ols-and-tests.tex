@@ -66,6 +66,50 @@ Statystyka F-Snedachora ma postać \(F = \frac{R^2}{k} \frac{n-k-1}{1-R^2}\) o \
 Jeżeli \(F > F_\alpha,r1,r2 \) to odrzucamy \(H_0\).
 Oznacza to, że przynajmniej jedna zmienna objaśniająca jest statystycznie ważna w modelu.
 
+\subsection{Normalność reszt}\label{subsec:normalność-reszt}
+
+Jednym z założeń MNK jest normalność reszt.
+
+\subsubsection{Test Jarque-Bera}
+Test Jarque-Bera polega na obliczeniu skośności oraz kurtozy w modelu i porównanie ich do znanym wartości z rozkładu normalnego
+
+\begin{equation}
+    \begin{split}
+        &H_0: \epsilon \sim N(0,\sigma) \\
+        &H_1: \epsilon \not\sim N(0,\sigma)
+    \end{split}
+\end{equation}
+
+
+\begin{equation}
+    JB = n (\frac{1}{6}B_1 + \frac{1}{24}(B_2 -3)^2)
+\end{equation}
+gdzie
+
+\begin{equation}
+    \begin{split}
+        &\bar{S} = \sqrt{\frac{1}{n}\sum_{t=1}^{n}e^2_t} \\
+        &\sqrt{B_1} = \frac{1}{n\bar{S^3}\sum_{t=1}^{n}e^3_t}  \\
+        & B_2 = \frac{1}{n\bar{S^4}\sum_{t=1}^{n}{e^4_t}}
+    \end{split}
+\end{equation}
+
+Statystyka JB ma rozklad \(\chi^2\) z dwoma stopniami swobody.
+
+Jeżeli \(JB > \chi^2_2\) to odrzucamy \(H_0\).
+
+\subsubsection{Centralne twierdzenie graniczne}
+
+Jeżeli próbę z populacji o sredniej \(\mu\) i skończinym odchyleniu standardowym \(\sigma \), to rozkład sredniej z próby, \(\bar{X}\), daży do rozkładu normalnego o sredniej \(\mu\) i odchyleniu standardowym \(\sqrt{\sigma} \), gdy liczebnosć próby wzrasta nieograniczenie, czyli dla "dostatecznie dużych" n.
+
+\begin{equation}
+    \begin{split}
+        \frac{\frac{1}{n} \sum_{i=1}^{n} X_i - \mu}{\frac{\sigma}{\sqrt{n}}}
+    \end{split}
+\end{equation}
+
+W moim modelu występuje około 20 tysięcy obserwacji, więc przy sprawdzaniu normalności rozkładu można powołać się na to twierdzenie.
+
 \subsection{Istotność statystyczna pojedyńczych zmiennych objaśniających}\label{subsec:istotność-statystyczna-zmiennych-objaśniających}
 Jeżeli spełnione jest założenie o normalności reszt, to możemy postawić następujące hipotezę
 

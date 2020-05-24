@@ -1,6 +1,6 @@
 import unittest
 
-from src.ols_model import f_pvalue, t_pvalue
+from src.ols_model import f_pvalue, t_pvalue, chi_square_pvalue
 
 
 class TestModel(unittest.TestCase):
@@ -19,3 +19,11 @@ class TestModel(unittest.TestCase):
         result = f_pvalue(f_stat, df)
 
         self.assertAlmostEqual(0.301599, result, places=4)
+
+    def test_chi_square_pvalue(self):
+        chi_square_stat = 2.222
+        df = 5
+
+        result = chi_square_pvalue(chi_square_stat, df)
+
+        self.assertAlmostEqual(0.817652, result, places=4)

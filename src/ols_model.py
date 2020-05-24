@@ -34,6 +34,10 @@ def f_pvalue(stat, df):
     return stats.f.sf(stat, dfn=df[0], dfd=df[1])
 
 
+def chi_square_pvalue(stat, df):
+    return stats.chi2.sf(stat, df)
+
+
 class OLSModel:
     def __init__(self, x, y):
         self.x = np.array(x)
@@ -50,6 +54,7 @@ class OLSModel:
         self.rsquare_adjusted = 0
         self.s_squared = 0
         self.d_squared = None
+        self.residuals = None
 
     def fit(self):
         x_t = np.transpose(self.x_const)
@@ -57,14 +62,12 @@ class OLSModel:
         self.a = x_t_x_inverse @ (x_t @ self.y)
 
         y_hat = self.x_const @ self.a
-        e_t_e = ((self.y - y_hat) ** 2).sum()
-
+        self.residuals = self.y - y_hat
+        e_t_e = (self.residuals ** 2).sum()
         self.rsquare = 1 - (e_t_e / ((self.y - self.y.mean()) ** 2).sum())
-
         self.rsquare_adjusted = self.rsquare - (
             self.k / (self.n - self.k - 1)
         ) * (1 - self.rsquare)
-
         self.s_squared = e_t_e / (self.n - self.k - 1)
         self.d_squared = self.s_squared * x_t_x_inverse
 
@@ -117,6 +120,14 @@ class OLSModel:
         )
         p_value = f_pvalue(f_calculated, df=(self.k, self.n - self.k - 1))
         return PValueTestResult("The significance of r squared", p_value)
+
+    def jarque_bera_test(self):
+        s_dash = math.sqrt((self.residuals ** 2).sum() / self.n)
+        b_1 = ((self.residuals ** 3).sum() / (self.n * (s_dash ** 3))) ** 2
+        b_2 = (self.residuals ** 4).sum() / (self.n * (s_dash ** 4))
+        jb = self.n * ((b_1 / 6) + ((b_2 - 3) ** 2) / 24)
+        p_value = chi_square_pvalue(jb, df=2)
+        return PValueTestResult("JB test", p_value)
 
 
 class OLS:
