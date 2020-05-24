@@ -45,12 +45,22 @@ class SignificanceOfVariablesTestResult(TestResult):
 
 class CoincidenceTestResult(TestResult):
     def __init__(self, coincidence_errors):
-        super().__init__(name="Coincidence")
+        super().__init__(name="Coincidence test")
         self.coincidence_errors = coincidence_errors
 
     @property
     def is_passing(self):
         return len(self.coincidence_errors)
+
+
+class CollinearityTestResult(TestResult):
+    def __init__(self, variables):
+        super().__init__("Collinearity test")
+        self.collinear_variables = variables
+
+    @property
+    def is_passing(self):
+        return len(self.variables)
 
 
 class CustomTestResult(TestResult):

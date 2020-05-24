@@ -21,6 +21,7 @@ from .test_results import (
     SignificanceOfVariablesTestResult,
     PValueTestResult,
     CoincidenceTestResult,
+    CollinearityTestResult,
 )
 
 
@@ -59,7 +60,11 @@ class OLSModel:
         self.x = np.array(x)
         self.x_const = np.insert(self.x, 0, values=1, axis=1)
         self.y = np.array(y)
-        self.col_names = x.columns if hasattr(x, "columns") else np.empty(len(self.x[0]), dtype=np.string_)
+        self.col_names = (
+            x.columns
+            if hasattr(x, "columns")
+            else np.empty(len(self.x[0]), dtype=np.string_)
+        )
         self.col_names_const = np.insert(
             self.col_names, 0, values="const", axis=0
         )
@@ -82,7 +87,7 @@ class OLSModel:
         self.ssr = np.dot(self.residuals, self.residuals)
         self.rsquare = 1 - (self.ssr / ((self.y - self.y.mean()) ** 2).sum())
         self.rsquare_adjusted = self.rsquare - (
-                self.k / (self.n - self.k - 1)
+            self.k / (self.n - self.k - 1)
         ) * (1 - self.rsquare)
 
         self.s_squared = self.ssr / (self.n - self.k - 1)
@@ -131,9 +136,9 @@ class OLSModel:
 
     def r_squared_significance(self):
         f_calculated = (
-                (self.rsquare / self.k)
-                * (self.n - self.k - 1)
-                / (1 - self.rsquare)
+            (self.rsquare / self.k)
+            * (self.n - self.k - 1)
+            / (1 - self.rsquare)
         )
         p_value = f_pvalue(f_calculated, df=(self.k, self.n - self.k - 1))
         return PValueTestResult("The significance of r squared", p_value)
@@ -177,6 +182,17 @@ class OLSModel:
         f_stat = ((rsk - rsk_1 - rsk_2) / (rsk_1 + rsk_2)) * (r_2 / r_1)
         p_value = f_pvalue(f_stat, df=(r_1, r_2))
         return PValueTestResult("Chow test", p_value)
+
+    def collinearity_test(self):
+        collinear = []
+        for i in range(self.k):
+            x = np.delete(self.x, [i], axis=1)
+            model = OLSModel(x, self.x[:, i])
+            model.fit()
+            if model.rsquare > 0.9:
+                collinear.append(self.col_names[i])
+
+        return CollinearityTestResult(collinear)
 
 
 class OLS:

@@ -118,14 +118,14 @@ class TestModel(unittest.TestCase):
 
         result = self.model.jarque_bera_test()
 
-        self.assertAlmostEqual(.240498, result.pvalue, places=4)
+        self.assertAlmostEqual(0.240498, result.pvalue, places=4)
 
     def test_runs_test(self):
         self.model.fit()
 
         result = self.model.runs_test()
 
-        self.assertAlmostEqual(.390826, result.pvalue, places=4)
+        self.assertAlmostEqual(0.390826, result.pvalue, places=4)
 
     def test_chow_test(self):
         self.model.fit()
@@ -133,4 +133,11 @@ class TestModel(unittest.TestCase):
         result = self.model.chow_test()
 
         # .1715
-        self.assertAlmostEqual(.33407, result.pvalue, places=4)
+        self.assertAlmostEqual(0.33407, result.pvalue, places=4)
+
+    def test_collinearity_test(self):
+        self.model.fit()
+
+        result = self.model.collinearity_test()
+
+        self.assertEqual(3, len(result.collinear_variables))

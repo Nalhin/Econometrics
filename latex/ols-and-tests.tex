@@ -201,3 +201,19 @@ Gdzie
 
 Statystyka F ma rozkład F-Snedachora z \(r_1=k+1 \) i \(r_2= n -2(k+1) \) stopniami swobody.
 Jeżeli \( F > F_{\alpha,r_1,r_2} \) to odrzucamy \(H_{0}\).
+
+\subsection{Współliniowość zmiennych objaśniających}\label{subsec:współliniowość-zmiennych-objaśniających}
+
+Z założeń MNK wynika, że rzad macierzy X jest równy liczbie kolumn tej macierzy \((k+1)\).
+Oznacza to, że kolumny macierzy są liniowo niezależne.
+
+Aby sprawdzić współliniowość zmiennych w modelu
+
+\begin{equation}
+    y = \alpha_{0} + \alpha_{1}X_{1} + \dots + \alpha{k}X_{k} + \varepsilon
+\end{equation}
+
+Szacujemy pomocnicze modele, w których zmienna objaśnianą jest \(X_i\) , a zmiennymi objaśniającymi pozostałe zmienne oraz wyraz wolny.
+Dla modeli \(i=1,2, \dots ,k \) wyznaczamy odpowiednie współczynniki determinacji.
+Jeżeli \(R_{i}^{2} > 0.9\) to w modelu zachodzi zjawisko współliniowości, które zakłóca jakość modelu.
+Należy wtedy usunąć tą zmienna z modelu, jednakże może on się wtedy okazać bezużyteczny.
