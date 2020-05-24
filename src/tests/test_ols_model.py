@@ -17,8 +17,6 @@ class TestModel(unittest.TestCase):
         self.model = OLSModel(self.df, self.y)
 
     def test_fit_calculates_predicted_parameters(self):
-        self.model.fit()
-
         npt.assert_array_almost_equal(
             np.array([82.1587, -23.7426, -4.07741, 12.9243, 0.00199456]),
             self.model.a,
@@ -63,3 +61,12 @@ class TestModel(unittest.TestCase):
         result = self.model.r_squared_significance()
 
         self.assertAlmostEqual(0, result.pvalue, places=4)
+
+    def test_model_coincidence(self):
+        self.model.fit()
+
+        result = self.model.model_coincidence()
+
+        self.assertEqual(2, len(result.coincidence_errors))
+        self.assertTrue(dict(variable="pr") in result.coincidence_errors)
+        self.assertTrue(dict(variable="i") in result.coincidence_errors)

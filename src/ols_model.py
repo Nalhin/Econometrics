@@ -18,6 +18,7 @@ from .test_results import (
     CatalysisTestResult,
     SignificanceOfVariablesTestResult,
     PValueTestResult,
+    CoincidenceTestResult,
 )
 
 
@@ -51,7 +52,6 @@ class OLSModel:
         self.d_squared = None
 
     def fit(self):
-
         x_t = np.transpose(self.x_const)
         x_t_x_inverse = np.linalg.inv(x_t @ self.x_const)
         self.a = x_t_x_inverse @ (x_t @ self.y)
@@ -98,6 +98,16 @@ class OLSModel:
             )
 
         return SignificanceOfVariablesTestResult(results)
+
+    def model_coincidence(self):
+        r_0 = [np.corrcoef(self.x[:, i], self.y)[0][1] for i in range(self.k)]
+        a = self.a[1:]
+        results = []
+        for r in range(self.k):
+            if sign(r_0[r]) != sign(a[r]):
+                results.append(dict(variable=self.col_names[r]))
+
+        return CoincidenceTestResult(results)
 
     def r_squared_significance(self):
         f_calculated = (

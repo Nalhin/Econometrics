@@ -42,24 +42,22 @@ class SignificanceOfVariablesTestResult(TestResult):
     def is_passing(self):
         return all(p["pvalue"] < P_VALUE_THRESHOLD for p in self.variables)
 
-    class CoincidenceTestResult(TestResult):
-        def __init__(self, coincidence):
-            super().__init__(name="Coincidence")
-            self.coincidence = coincidence
 
-        @property
-        def is_passing(self):
-            for var in self.coincidence:
-                if not var["passing"]:
-                    return False
+class CoincidenceTestResult(TestResult):
+    def __init__(self, coincidence_errors):
+        super().__init__(name="Coincidence")
+        self.coincidence_errors = coincidence_errors
 
-            return True
+    @property
+    def is_passing(self):
+        return len(self.coincidence_errors)
 
-    class CustomTestResult(TestResult):
-        def __init__(self, name, successful):
-            super().__init__(name)
-            self.successful = successful
 
-        @property
-        def is_passing(self):
-            return self.successful
+class CustomTestResult(TestResult):
+    def __init__(self, name, successful):
+        super().__init__(name)
+        self.successful = successful
+
+    @property
+    def is_passing(self):
+        return self.successful
