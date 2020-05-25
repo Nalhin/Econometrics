@@ -60,7 +60,7 @@ class CollinearityTestResult(TestResult):
 
     @property
     def is_passing(self):
-        return len(self.variables)
+        return len(self.collinear_variables)
 
 
 class CustomTestResult(TestResult):

@@ -25,6 +25,14 @@ CORR_MATRIX_COLUMNS = [
     "DistanceFromCenter",
 ]
 
+FILTERED_COLUMNS = [
+    "Price",
+    "Accommodates",
+    "MinimumNights",
+    "NumberOfReviews",
+    "DistanceFromCenter",
+]
+
 OUTPUT_PATH = "latex/generated"
 
 P_VALUE_THRESHOLD = 0.05

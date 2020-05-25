@@ -6,9 +6,10 @@ import pandas as pd
 from operator import itemgetter
 
 from scipy import stats
+from scipy.stats import trimboth
 from sklearn.model_selection import train_test_split
 
-from .config import MODEL_COLUMNS
+from .config import MODEL_COLUMNS, CORR_MATRIX_COLUMNS, FILTERED_COLUMNS
 from .parse_dataset import (
     add_distance_from_center,
     clean_price,
@@ -95,6 +96,25 @@ class OLSModel:
         self.s_squared = self.ssr / (self.n - self.k - 1)
         self.d_squared = self.s_squared * x_t_x_inverse
 
+    def validate(self):
+        failed = []
+        for test in (
+            self.catalysis_effect(),
+            self.statistical_significance_of_parameters(),
+            self.model_coincidence(),
+            self.r_squared_significance(),
+            self.jarque_bera_test(),
+            self.runs_test(),
+            self.chow_test(),
+            self.collinearity_test(),
+            self.breusch_godfrey_test(),
+            self.breusch_pagan_test(),
+            self.ramsey_reset(),
+        ):
+            if not test.is_passing:
+                failed.append(test)
+        return failed
+
     def catalysis_effect(self):
         r = np.corrcoef(self.x.transpose())
         r_0 = [np.corrcoef(self.x[:, i], self.y)[1][0] for i in range(self.k)]
@@ -111,9 +131,8 @@ class OLSModel:
     def statistical_significance_of_parameters(self):
         results = []
         for i in range(self.k + 1):
-            s_a = math.sqrt(self.d_squared[i, i])
+            s_a = math.sqrt(abs(self.d_squared[i, i]))
             a_j = self.a[i]
-
             t_calculated = a_j / s_a
             pvalue = t_pvalue(t_calculated, df=self.n - self.k - 1)
             results.append(
@@ -160,18 +179,18 @@ class OLSModel:
                 zip(self.residuals, self.y), key=itemgetter(1)
             )
         ]
-        n_plus = (np.array(sorted_residuals) >= 0).sum()
-        n_minus = (np.array(sorted_residuals) <= 0).sum()
+        n_plus = (np.array(sorted_residuals) > 0).sum()
+        n_minus = (np.array(sorted_residuals) < 0).sum()
         n_runs = count_runs_series(sorted_residuals)
         mu = ((2 * n_plus * n_minus) / self.n) + 1
         sigma = math.sqrt(((mu - 1) * (mu - 2)) / (self.n - 1))
-        z_score = (n_runs - mu) / sigma
+        z_score = (n_runs - mu) / sigma if sigma else math.inf
         p_value = z_score_pvalue(z_score)
         return PValueTestResult("Runs test", p_value)
 
     def chow_test(self):
-        x_1, x_2 = np.vsplit(self.x, 2)
-        y_1, y_2 = np.split(self.y, 2)
+        x_1, x_2 = np.vsplit(self.x, [self.n // 2])
+        y_1, y_2 = np.split(self.y, [self.n // 2])
         ols_1 = OLSModel(x_1, y_1)
         ols_2 = OLSModel(x_2, y_2)
         ols_1.fit()
@@ -225,6 +244,24 @@ class OLSModel:
         return PValueTestResult("Ramsey RESET", pvalue)
 
 
+class ModelSummary:
+    def __init__(self, failed_tests, variables):
+        self.failed_tests = failed_tests
+        self.variables = variables
+
+    def to_string(self):
+        stra = "=====================\n"
+        stra += " ".join(self.variables)
+        stra += "\n======FAILED TESTS======\n"
+        for test in self.failed_tests:
+            stra += test.name
+            if hasattr(test, "pvalue"):
+                stra += str(test.pvalue)
+            stra += " "
+        stra += "\n=====================\n"
+        return stra
+
+
 class OLS:
     def __init__(self, df):
         self.df = df
@@ -237,8 +274,9 @@ class OLS:
 
     def clean_data(self):
         self.df.columns = [pascalize(col) for col in self.df.columns]
-        self.df.set_index("Id")
         self.df = self.df[MODEL_COLUMNS]
+        self.df.set_index("Id", inplace=True)
+        self.df.RoomType.astype("category")
         clean_price(self.df)
         add_distance_from_center(self.df)
         self.remove_outliers()
@@ -257,7 +295,10 @@ class OLS:
         add_distance_from_center(self.df)
 
     def remove_outliers(self):
-        pass
+        df = self.df.copy(deep=True)
+        for col in FILTERED_COLUMNS:
+            df = df[(np.abs(stats.zscore(df[col])) < 3)]
+        self.df = df
 
     def split(self):
         df = pd.get_dummies(self.df, drop_first=True)
@@ -278,8 +319,16 @@ class OLS:
                 )
             )
         )
-        combinations = list(combinations)[15:17]
+        combinations = list(combinations)
+
         for com in combinations:
             model = OLSModel(self.x_train[list(com)], self.y_train)
             model.fit()
-            self.models.append(model)
+            try:
+                self.models.append(ModelSummary(model.validate(), list(com)))
+            except:
+                pass
+        with open("Output.txt", "w") as text_file:
+            for model in self.models:
+                print(model.to_string())
+                text_file.write(model.to_string())

@@ -23,11 +23,6 @@ def clean_price(df):
     df.Price = (
         df["Price"].str.replace("$", "").str.replace(",", "").astype(float)
     )
-    df.drop(
-        df[(df["Price"] > 500) | (df["Price"] == 0)].index,
-        axis=0,
-        inplace=True,
-    )
 
 
 def all_combinations(in_list):
