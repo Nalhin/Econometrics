@@ -1,8 +1,8 @@
 import pandas as pd
 
-from .ols_model import OLS
+from .ols_estimator import OLSEstimator
 
-ols = OLS(pd.read_csv("./data/listings_summary.csv"))
+ols = OLSEstimator(pd.read_csv("./data/listings_summary.csv"))
 
 ols.clean_data()
 ols.calculate_models()

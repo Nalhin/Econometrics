@@ -1,24 +1,11 @@
 import math
 
 import numpy as np
-import pandas as pd
 
 from operator import itemgetter
-
 from scipy import stats
-from scipy.stats import trimboth
-from sklearn.model_selection import train_test_split
 
-from .config import MODEL_COLUMNS, CORR_MATRIX_COLUMNS, FILTERED_COLUMNS
-from .parse_dataset import (
-    add_distance_from_center,
-    clean_price,
-    pascalize,
-    all_combinations,
-)
-from .plotter import Plotter
-from .summarizer import Summarizer
-from .test_results import (
+from .stat_tests_results import (
     CatalysisTestResult,
     SignificanceOfVariablesTestResult,
     PValueTestResult,
@@ -31,19 +18,19 @@ def sign(x):
     return math.copysign(1, x)
 
 
-def t_pvalue(stat, df):
+def t_p_value(stat, df):
     return stats.t.sf(abs(stat), df=df) * 2
 
 
-def f_pvalue(stat, df):
+def f_p_value(stat, df):
     return stats.f.sf(stat, dfn=df[0], dfd=df[1])
 
 
-def chi_square_pvalue(stat, df):
+def chi_square_p_value(stat, df):
     return stats.chi2.sf(stat, df)
 
 
-def z_score_pvalue(z_score):
+def z_score_p_value(z_score):
     return stats.norm.sf(abs(z_score)) * 2
 
 
@@ -57,7 +44,7 @@ def count_runs_series(series):
     return n
 
 
-class OLSModel:
+class OLS:
     def __init__(self, x, y):
         self.x = np.array(x)
         self.x_const = np.insert(self.x, 0, values=1, axis=1)
@@ -134,10 +121,10 @@ class OLSModel:
             s_a = math.sqrt(abs(self.d_squared[i, i]))
             a_j = self.a[i]
             t_calculated = a_j / s_a
-            pvalue = t_pvalue(t_calculated, df=self.n - self.k - 1)
+            p_value = t_p_value(t_calculated, df=self.n - self.k - 1)
             results.append(
                 dict(
-                    pvalue=pvalue,
+                    pvalue=p_value,
                     variable=self.col_names_const[i],
                     tstat=t_calculated,
                 )
@@ -161,7 +148,7 @@ class OLSModel:
             * (self.n - self.k - 1)
             / (1 - self.rsquare)
         )
-        p_value = f_pvalue(f_calculated, df=(self.k, self.n - self.k - 1))
+        p_value = f_p_value(f_calculated, df=(self.k, self.n - self.k - 1))
         return PValueTestResult("The significance of r squared", p_value)
 
     def jarque_bera_test(self):
@@ -169,7 +156,7 @@ class OLSModel:
         b_1 = ((self.residuals ** 3).sum() / (self.n * (s_dash ** 3))) ** 2
         b_2 = (self.residuals ** 4).sum() / (self.n * (s_dash ** 4))
         jb = self.n * ((b_1 / 6) + ((b_2 - 3) ** 2) / 24)
-        p_value = chi_square_pvalue(jb, df=2)
+        p_value = chi_square_p_value(jb, df=2)
         return PValueTestResult("JB test", p_value)
 
     def runs_test(self):
@@ -185,14 +172,14 @@ class OLSModel:
         mu = ((2 * n_plus * n_minus) / self.n) + 1
         sigma = math.sqrt(((mu - 1) * (mu - 2)) / (self.n - 1))
         z_score = (n_runs - mu) / sigma if sigma else math.inf
-        p_value = z_score_pvalue(z_score)
+        p_value = z_score_p_value(z_score)
         return PValueTestResult("Runs test", p_value)
 
     def chow_test(self):
         x_1, x_2 = np.vsplit(self.x, [self.n // 2])
         y_1, y_2 = np.split(self.y, [self.n // 2])
-        ols_1 = OLSModel(x_1, y_1)
-        ols_2 = OLSModel(x_2, y_2)
+        ols_1 = OLS(x_1, y_1)
+        ols_2 = OLS(x_2, y_2)
         ols_1.fit()
         ols_2.fit()
         rsk_1 = ols_1.ssr
@@ -201,14 +188,14 @@ class OLSModel:
         r_1 = self.k + 1
         r_2 = self.n - 2 * (self.k + 1)
         f_stat = ((rsk - rsk_1 - rsk_2) / (rsk_1 + rsk_2)) * (r_2 / r_1)
-        p_value = f_pvalue(f_stat, df=(r_1, r_2))
+        p_value = f_p_value(f_stat, df=(r_1, r_2))
         return PValueTestResult("Chow test", p_value)
 
     def collinearity_test(self):
         collinear = []
         for i in range(self.k):
             x = np.delete(self.x, [i], axis=1)
-            model = OLSModel(x, self.x[:, i])
+            model = OLS(x, self.x[:, i])
             model.fit()
             if model.rsquare > 0.9:
                 collinear.append(self.col_names[i])
@@ -217,118 +204,28 @@ class OLSModel:
 
     def breusch_godfrey_test(self):
         x_e = np.c_[self.x, np.append(np.zeros([1]), self.residuals[:-1])]
-        model = OLSModel(x_e, self.residuals)
+        model = OLS(x_e, self.residuals)
         model.fit()
         lm = self.n * model.rsquare
-        p_value = chi_square_pvalue(lm, df=1)
+        p_value = chi_square_p_value(lm, df=1)
         return PValueTestResult("Breuch Godfrey test", p_value)
 
     def breusch_pagan_test(self):
         sigma = self.ssr / self.n
-        model = OLSModel(self.x, self.residuals ** 2 - sigma)
+        model = OLS(self.x, self.residuals ** 2 - sigma)
         model.fit()
         lm = self.n * model.rsquare
-        chi_p = chi_square_pvalue(lm, df=self.k)
+        chi_p = chi_square_p_value(lm, df=self.k)
         return PValueTestResult("Breuch Pagan test", chi_p)
 
     def ramsey_reset(self):
         extended_x = np.c_[self.x, self.predicted ** 2, self.predicted ** 3]
-        model = OLSModel(extended_x, self.y)
+        model = OLS(extended_x, self.y)
         model.fit()
         rs_1 = self.rsquare
         rs_2 = model.rsquare
         df_1 = 2
         df_2 = self.n - self.k - 3
         reset = (rs_2 - rs_1) / (1 - rs_2) * (df_2 / df_1)
-        pvalue = f_pvalue(reset, df=(df_1, df_2))
-        return PValueTestResult("Ramsey RESET", pvalue)
-
-
-class ModelSummary:
-    def __init__(self, failed_tests, variables):
-        self.failed_tests = failed_tests
-        self.variables = variables
-
-    def to_string(self):
-        stra = "=====================\n"
-        stra += " ".join(self.variables)
-        stra += "\n======FAILED TESTS======\n"
-        for test in self.failed_tests:
-            stra += test.name
-            if hasattr(test, "pvalue"):
-                stra += str(test.pvalue)
-            stra += " "
-        stra += "\n=====================\n"
-        return stra
-
-
-class OLS:
-    def __init__(self, df):
-        self.df = df
-        self.models = []
-        self.x_train = None
-        self.x_test = None
-        self.y_train = None
-        self.y_test = None
-        self.black_list = ["Longitude", "Latitude", "Id"]
-
-    def clean_data(self):
-        self.df.columns = [pascalize(col) for col in self.df.columns]
-        self.df = self.df[MODEL_COLUMNS]
-        self.df.set_index("Id", inplace=True)
-        self.df.RoomType.astype("category")
-        clean_price(self.df)
-        add_distance_from_center(self.df)
-        self.remove_outliers()
-
-    def calculate_models(self):
-        self.split()
-        self.fit_models()
-
-    def output_latex(self):
-        plotter = Plotter(self.df)
-        plotter.save_figures()
-        summarizer = Summarizer(self.df)
-        summarizer.generate_summary_stats()
-
-    def add_calculated(self):
-        add_distance_from_center(self.df)
-
-    def remove_outliers(self):
-        df = self.df.copy(deep=True)
-        for col in FILTERED_COLUMNS:
-            df = df[(np.abs(stats.zscore(df[col])) < 3)]
-        self.df = df
-
-    def split(self):
-        df = pd.get_dummies(self.df, drop_first=True)
-        df = df.dropna()
-        y = df.pop("Price")
-        (
-            self.x_train,
-            self.x_test,
-            self.y_train,
-            self.y_test,
-        ) = train_test_split(df, y, test_size=0.1)
-
-    def fit_models(self):
-        combinations = all_combinations(
-            list(
-                filter(
-                    lambda x: x not in self.black_list, self.x_train.columns
-                )
-            )
-        )
-        combinations = list(combinations)
-
-        for com in combinations:
-            model = OLSModel(self.x_train[list(com)], self.y_train)
-            model.fit()
-            try:
-                self.models.append(ModelSummary(model.validate(), list(com)))
-            except:
-                pass
-        with open("Output.txt", "w") as text_file:
-            for model in self.models:
-                print(model.to_string())
-                text_file.write(model.to_string())
+        p_value = f_p_value(reset, df=(df_1, df_2))
+        return PValueTestResult("Ramsey RESET", p_value)

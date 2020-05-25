@@ -6,3 +6,4 @@ src/__pycache__/
 latex/templates/
 latex/generated
 .coverage
+.summary

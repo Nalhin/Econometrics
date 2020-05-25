@@ -297,3 +297,96 @@ Statystyka testowa
 \end{equation}
 
 Dla dużej liczby obserwacji \((n > 30)\) statystyka testowa ma rozkład \(\chi^{2}\) z \(k\) stopniami swobody.
+
+
+\section{Korekty postaci modelu}\label{sec:korekty-postaci-modelu}
+
+\subsection{Korekta heteroschedastyczności}\label{subsec:korekta-heteroschedastyczności---transformacja-modelu}
+
+Problem heteroschedastyczności można czasem zlikwidować prostą korekta.
+
+Zakladamy, że szacujemy parametry modelu
+
+\begin{equation}
+    \begin{split}
+        y = \beta_{0} +\beta_{1}X_{1} + \beta_{2}X_{2} +\beta_{3}X_{3} + \varepsilon
+    \end{split}
+\end{equation}
+
+Następnie zakładamy, że zmienna \( X_{3}\), jest tą, która powoduje zmiany w wariancji składnika losowego wprost proporcjonalne do swojej wartości
+
+\begin{equation}
+    \begin{split}
+        Var(\frac{\varepsilon_{i}}{\sqrt{X_{3i}}}) = \frac{1}{x_{3i}}\sigma^{2}X_{3i}=\sigma^2
+    \end{split}
+\end{equation}
+
+Zatem składnik losowy \( \frac{\varepsilon_{i}}{\sqrt{X_{3i}}}\) ma stałą wariacje \(\sigma^{2}\).
+Wynika z tego, że można przeprowadzić transformacje modelu w model homoskedastyczny czyli
+
+\begin{equation}
+    \begin{split}
+        \frac{y_{i}}{\sqrt{X_{3i}}} = \beta_{0}\frac{1}{\sqrt{X_{3i}}} + \beta_{1}\frac{X_{1i}}{\sqrt{X_{3i}}} + \beta_{2}\frac{X_{2i}}{\sqrt{X_{3i}}} + \beta_{0}\sqrt{X_{3i}}+\frac{\varepsilon_{i}}{\sqrt{X_{3i}}}
+    \end{split}
+\end{equation}
+
+\subsection{Uogólniona metoda najmniejszych kwadratów}\label{subsec:uogólniona-metoda-najmniejszych-kwadratów}
+
+W przypadku występowania autokorekacji lub heteroskedastyczności skłądnika losowego można zastosować uogólniona metode najmniejszych kwadratów (UMNK).
+W metodzie tej czwarte założenie MNK przybiera postać \(D^{2}(\varepsilon) = \sigma_{2}V \), gdzie V jest macierzą symetryczną dodatnie określona.
+
+Wartości UMNK
+\begin{equation}
+    \begin{split}
+        &a = (X^{T}V_{-1}X)^{-1} X^{T}V^{-1}y \\
+        &S^{2} = \frac{e^{T}V^{-1}e}{n-k-1} \\
+        &D^2(a) = S^2(X^{T}V^{-1}X)^{-1}
+    \end{split}
+\end{equation}
+
+W przypadku występowania procesu autokorelacji I rzędu składnika losowego \(V^{-1}\) ma postać
+
+\begin{equation}
+    \begin{split}
+        &V_{-1} = \frac{1}{1-p^{2}} \begin{bmatrix}
+                                        1 & 2 & 3\\
+                                        a & b & c
+        \end{bmatrix}
+    \end{split}
+\end{equation}
+
+
+Dla heteroskedastycznego składnika losowego macierz kowariacnji mozna zapisać jako.
+
+\begin{equation}
+    \begin{split}
+        &D_{2}(\varepsilon) =
+        \begin{bmatrix}
+            \sigma_{1}^{2} & 0 & \dots & 0\\
+            0 & \sigma_{2}^{2} & \dots & 0\\
+            \dots & \dots & \dots & \dots\\
+            0 & 0 & \dots & \sigma_{n}^{2}
+        \end{bmatrix}
+        =
+        \sigma^{2}
+        \begin{bmatrix}
+            \omega_{1} & 0 & \dots  & 0\\
+            0 & \omega_{2} & \dots  & 0\\
+            \dots & \dots & \dots & \dots\\
+            0 & 0 & \dots \omega_{n}
+        \end{bmatrix} //
+    \end{split}
+\end{equation}
+
+Zatem
+
+\begin{equation}
+    \begin{split}
+        &V^{-1} = \begin{bmatrix}
+                      \frac{1}{\omega_{1}} & 0 & \dots 0\\
+                      0 & \frac{1}{\omega_{2}} & \dots 0\\
+                      \dots & \dots & \dots & \dots\\
+                      0 & 0 & \dots \frac{1}{\omega_{n}}
+        \end{bmatrix}
+    \end{split}
+\end{equation}

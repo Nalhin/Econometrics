@@ -2,7 +2,8 @@ import os
 
 from mako.template import Template
 
-from src.config import OUTPUT_PATH
+from .config import OUTPUT_PATH
+from .translations import apply_translations
 
 
 class Summarizer:
@@ -35,19 +36,21 @@ class Summarizer:
             ),
             "w",
         )
-        tab.write(template.render(title=col_name, column=description.items()))
+        tab.write(
+            template.render(
+                title=col_name, column=apply_translations(description).items()
+            )
+        )
         tab.close()
 
     @staticmethod
     def enrich_object_description(description, col):
-        description["missing"] = col.isnull().sum()
         return description
 
     @staticmethod
     def enrich_number_description(description, col):
         description["kurtosis"] = col.kurtosis()
         description["skewness"] = col.skew()
-        description["missing"] = col.isnull().sum()
         description["std"] = col.std()
         del description["count"]
         return description

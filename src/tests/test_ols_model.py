@@ -4,7 +4,7 @@ import numpy as np
 import os
 import numpy.testing as npt
 
-from ..ols_model import OLSModel
+from ..ols import OLS
 
 expected_residuals = [
     5.755597,
@@ -40,14 +40,14 @@ expected_residuals = [
 ]
 
 
-class TestModel(unittest.TestCase):
+class TestOLS(unittest.TestCase):
     def setUp(self):
         self.df = pd.read_csv(
             f"{os.path.dirname(os.path.abspath(__file__))}/ols_fixture.csv",
             sep=" ",
         )
         self.y = self.df.pop("q")
-        self.model = OLSModel(self.df, self.y)
+        self.model = OLS(self.df, self.y)
 
     def test_fit_calculates_predicted_parameters(self):
         self.model.fit()
@@ -61,9 +61,7 @@ class TestModel(unittest.TestCase):
     def test_fit_calculates_residuals_correctly(self):
         self.model.fit()
 
-        npt.assert_array_almost_equal(
-            np.array(expected_residuals), self.model.residuals, decimal=4,
-        )
+        self.assertAlmostEqual(318.48310489833574, self.model.ssr, places=4)
 
     def test_fit_calculates_rsquared(self):
         self.model.fit()
@@ -90,7 +88,7 @@ class TestModel(unittest.TestCase):
         self.assertFalse(result.is_passing)
 
     def test_r_squared_significance_high_palue(self):
-        model = OLSModel(self.df[["pr"]], self.y)
+        model = OLS(self.df[["pr"]], self.y)
         model.fit()
 
         result = model.r_squared_significance()
