@@ -161,14 +161,41 @@ Gdzie
 
 Jeżeli \(|Z| > Z_{1-\alpha/2}\) to odrzucamy \(H_0\).
 
+\subsection{Stabilność postaci analitycznej - test Ramseya}\label{subsec:stabilność-postaci-analitycznej---test-ramseya}
+
+\begin{equation}
+    \begin{split}
+        &H_0: \text{wybór postaći analitycznej modelu jest prawidłowy} \\
+        &H_1: \text{wybór psotaci analitycznej modelu nie jest prawidłowy}
+    \end{split}
+\end{equation}
+
+
+Szacujemy paramert modelu
+\begin{equation}
+    \begin{split}
+        &y_{t} = \beta_{0} + \beta_{1}x_{1t} + \dots + \beta_{k}x_{kt} +\beta{k+1}ŷ_{t}^{2} + \beta_{k+2}ŷ_{t}^{3} + \mu_{t}
+    \end{split}
+\end{equation}
+
+Wyznaczamy statystyke testowa
+
+\begin{equation}
+    \begin{split}
+        F = \frac{R_{II}^{2} - R{I}^{2}}{1-R{II}} * \frac{n-k-3}{2}
+    \end{split}
+\end{equation}
+
+Statystyka F ma rozklad F-Snedachora o \(r_1=2 \) i \(r_2=n-k-3\)
+
 \subsection{Stabilność parametrów modelu - test Chowa}\label{subsec:stabilność-parametrów-modelu}
 
 Do sprawdzenia stabilności parametrów modelu można wykorzystać test Chowa.
 
 \begin{equation}
     \begin{split}
-        &H_0: parametry \;  modelu \; są \; stabilne \\
-        &H_1: parametry \;  modelu \; nie \; są \; stabilne
+        &H_0: \text{parametry modelu są stabilne} \\
+        &H_1: \text{parametry modelu nie są stabilne}
     \end{split}
 \end{equation}
 
@@ -249,8 +276,8 @@ Estymator parametrów wyestymowany w sytuacji wystepowania heteroskedastycznośc
 
 \begin{equation}
     \begin{split}
-        &H_0: \test{reszty są homoskedastyczne}\\
-        &H_1: \text{reszty sa heteroschedastyczne}
+        &H_0: \text{reszty są homoskedastyczne}\\
+        &H_1: \text{reszty są heteroschedastyczne}
     \end{split}
 \end{equation}
 

@@ -197,12 +197,7 @@ class OLSModel:
         return CollinearityTestResult(collinear)
 
     def breusch_godfrey_test(self):
-        x_e = np.insert(
-            self.x,
-            self.k,
-            values=np.append(np.zeros([1]), self.residuals[:-1]),
-            axis=1,
-        )
+        x_e = np.c_[self.x, np.append(np.zeros([1]), self.residuals[:-1])]
         model = OLSModel(x_e, self.residuals)
         model.fit()
         lm = self.n * model.rsquare
@@ -216,6 +211,18 @@ class OLSModel:
         lm = self.n * model.rsquare
         chi_p = chi_square_pvalue(lm, df=self.k)
         return PValueTestResult("Breuch Pagan test", chi_p)
+
+    def ramsey_reset(self):
+        extended_x = np.c_[self.x, self.predicted ** 2, self.predicted ** 3]
+        model = OLSModel(extended_x, self.y)
+        model.fit()
+        rs_1 = self.rsquare
+        rs_2 = model.rsquare
+        df_1 = 2
+        df_2 = self.n - self.k - 3
+        reset = (rs_2 - rs_1) / (1 - rs_2) * (df_2 / df_1)
+        pvalue = f_pvalue(reset, df=(df_1, df_2))
+        return PValueTestResult("Ramsey RESET", pvalue)
 
 
 class OLS:

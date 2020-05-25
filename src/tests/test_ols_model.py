@@ -154,3 +154,10 @@ class TestModel(unittest.TestCase):
         result = self.model.breusch_pagan_test()
 
         self.assertAlmostEqual(0.6593, result.pvalue, places=4)
+
+    def test_ramsey_reset(self):
+        self.model.fit()
+
+        result = self.model.ramsey_reset()
+
+        self.assertAlmostEqual(0.0186, result.pvalue, places=4)
