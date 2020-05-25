@@ -132,7 +132,6 @@ class TestModel(unittest.TestCase):
 
         result = self.model.chow_test()
 
-        # .1715
         self.assertAlmostEqual(0.33407, result.pvalue, places=4)
 
     def test_collinearity_test(self):
@@ -148,3 +147,10 @@ class TestModel(unittest.TestCase):
         result = self.model.breusch_godfrey_test()
 
         self.assertAlmostEqual(0.07163, result.pvalue, places=4)
+
+    def test_breusch_pagan_test(self):
+        self.model.fit()
+
+        result = self.model.breusch_pagan_test()
+
+        self.assertAlmostEqual(0.6593, result.pvalue, places=4)

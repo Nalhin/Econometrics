@@ -23,7 +23,7 @@ Przy spełnieniu założeń MNK estymator jest BLUE
     \item \textbf{E}stimator
 \end{itemize}
 
-\section {Poprawnośc statystyczna modelu}\label{sec:testy-statystyczne-modelu}
+\section {Poprawność statystyczna modelu}\label{sec:poprawność-statystyczna-modelu}
 
 \subsection{Występowanie efektu katalizy}\label{subsec:występowanie-efektu-katalizy}
 
@@ -130,8 +130,8 @@ Oznacza to brak wplywu zmiennej \(X_j\) na Y.
 
 \begin{equation}
     \begin{split}
-        &H_0: postać \; modelu \; jest \; liniowa \\
-        &H_1: postać \; modelu \; nie \; jest \; liniowa
+        &H_0: \text{postać modelu jest liniowa} \\
+        &H_1: \text{postać modelu nie jest liniowa}
     \end{split}
 \end{equation}
 
@@ -151,10 +151,10 @@ Gdzie
 
 \begin{equation}
     \begin{split}
-        &N_+ - ilość dodatnich elementów \\
-        &N_- - ilość ujemnych elementów \\
-        &N - ilość elementów \\
-        &R - ilość serii \\
+        &N_+ - \text{ilość dodatnich elementów} \\
+        &N_- - \text{ilość ujemnych elementów} \\
+        &N - text{ilość elementów} \\
+        &R - text{ilość serii} \\
     \end{split}
 \end{equation}
 
@@ -240,3 +240,33 @@ Nastepnie obliczmy statystyke testową
 \end{equation}
 
 Dla dużej liczby obserwacji \((n > 30)\) statystyka testowa ma rozkład \(\chi^2\) z jednym stopniem swobody.
+
+\subsection{Heteroskedastyczność składnika losowego - test Breuscha-Pagana}\label{subsec:heteroskedastyczność-składnika-losowego}
+
+Występowanie heteroskedastycznośc w modelu sprawia, że składniki losowe mimo braku wzjemnej koleracji maja rózne wariacje, co jest niezgodne z założeniami MNK.
+Estymator parametrów wyestymowany w sytuacji wystepowania heteroskedastyczności nie jest najefektywniejszy.
+
+
+\begin{equation}
+    \begin{split}
+        &H_0: \test{reszty są homoskedastyczne}\\
+        &H_1: \text{reszty sa heteroschedastyczne}
+    \end{split}
+\end{equation}
+
+Dla wyznaczonych reszt modelu przeprowadzamy regresje pomocnicza
+
+\begin{equation}
+    \begin{split}
+        \frac{\epsilon_{i}^{2}}{\sigma^2} = \gamma_{0} + \gamma_{1}z_{i} + \mu_{i}
+    \end{split}
+\end{equation}
+
+Statystyka testowa
+\begin{equation}
+    \begin{split}
+        LM = (n-1)R^{2}
+    \end{split}
+\end{equation}
+
+Dla dużej liczby obserwacji \((n > 30)\) statystyka testowa ma rozkład \(\chi^{2}\) z \(k\) stopniami swobody.

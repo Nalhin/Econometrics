@@ -78,13 +78,14 @@ class OLSModel:
         self.ssr = 0
         self.d_squared = None
         self.residuals = None
+        self.predicted = None
 
     def fit(self):
         x_t = np.transpose(self.x_const)
         x_t_x_inverse = np.linalg.inv(x_t @ self.x_const)
         self.a = x_t_x_inverse @ (x_t @ self.y)
-        y_hat = self.x_const @ self.a
-        self.residuals = self.y - y_hat
+        self.predicted = self.x_const @ self.a
+        self.residuals = self.y - self.predicted
         self.ssr = np.dot(self.residuals, self.residuals)
         self.rsquare = 1 - (self.ssr / ((self.y - self.y.mean()) ** 2).sum())
         self.rsquare_adjusted = self.rsquare - (
@@ -196,7 +197,6 @@ class OLSModel:
         return CollinearityTestResult(collinear)
 
     def breusch_godfrey_test(self):
-        print(np.zeros([1]))
         x_e = np.insert(
             self.x,
             self.k,
@@ -207,7 +207,15 @@ class OLSModel:
         model.fit()
         lm = self.n * model.rsquare
         p_value = chi_square_pvalue(lm, df=1)
-        return PValueTestResult("Residuals auto correlation", p_value)
+        return PValueTestResult("Breuch Godfrey test", p_value)
+
+    def breusch_pagan_test(self):
+        sigma = self.ssr / self.n
+        model = OLSModel(self.x, self.residuals ** 2 - sigma)
+        model.fit()
+        lm = self.n * model.rsquare
+        chi_p = chi_square_pvalue(lm, df=self.k)
+        return PValueTestResult("Breuch Pagan test", chi_p)
 
 
 class OLS:
