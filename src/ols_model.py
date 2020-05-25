@@ -1,7 +1,10 @@
 import math
+
+import numpy as np
+import pandas as pd
+
 from operator import itemgetter
 
-import pandas as pd
 from scipy import stats
 from sklearn.model_selection import train_test_split
 
@@ -14,8 +17,6 @@ from .parse_dataset import (
 )
 from .plotter import Plotter
 from .summarizer import Summarizer
-import numpy as np
-
 from .test_results import (
     CatalysisTestResult,
     SignificanceOfVariablesTestResult,
@@ -193,6 +194,20 @@ class OLSModel:
                 collinear.append(self.col_names[i])
 
         return CollinearityTestResult(collinear)
+
+    def breusch_godfrey_test(self):
+        print(np.zeros([1]))
+        x_e = np.insert(
+            self.x,
+            self.k,
+            values=np.append(np.zeros([1]), self.residuals[:-1]),
+            axis=1,
+        )
+        model = OLSModel(x_e, self.residuals)
+        model.fit()
+        lm = self.n * model.rsquare
+        p_value = chi_square_pvalue(lm, df=1)
+        return PValueTestResult("Residuals auto correlation", p_value)
 
 
 class OLS:

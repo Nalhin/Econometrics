@@ -1,6 +1,6 @@
 import unittest
 
-from src.ols_model import (
+from ..ols_model import (
     f_pvalue,
     t_pvalue,
     chi_square_pvalue,
@@ -38,4 +38,4 @@ class TestModel(unittest.TestCase):
 
         result = z_score_pvalue(z_score)
 
-        self.assertAlmostEqual(0.226279, result.pvalue, places=4)
+        self.assertAlmostEqual(0.226279, result, places=4)

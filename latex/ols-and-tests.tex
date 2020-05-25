@@ -217,3 +217,26 @@ Szacujemy pomocnicze modele, w których zmienna objaśnianą jest \(X_i\) , a zm
 Dla modeli \(i=1,2, \dots ,k \) wyznaczamy odpowiednie współczynniki determinacji.
 Jeżeli \(R_{i}^{2} > 0.9\) to w modelu zachodzi zjawisko współliniowości, które zakłóca jakość modelu.
 Należy wtedy usunąć tą zmienna z modelu, jednakże może on się wtedy okazać bezużyteczny.
+
+\subsection{Autokorelacja składnika losowego - test Breuscha-Godfreya}\label{subsec:autokorelacja-składnika-losowego}
+
+\begin{equation}
+    \begin{split}
+        &H_0: \rho = 0 \\
+        &H_1: \rho > 0
+    \end{split}
+\end{equation}
+
+Szacujemy model pomocniczy
+
+\begin{equation}
+    e_{t} = \beta_{0} + \beta_{1}x_{1t} + \beta_{2}x_{2t} + \dots + \beta_{k}x_{kt}\varepsilon_{t-1} + \mu_{t}
+\end{equation}
+
+Nastepnie obliczmy statystyke testową
+
+\begin{equation}
+    LM = (n-1)R^2
+\end{equation}
+
+Dla dużej liczby obserwacji \((n > 30)\) statystyka testowa ma rozkład \(\chi^2\) z jednym stopniem swobody.

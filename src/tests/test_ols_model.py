@@ -141,3 +141,10 @@ class TestModel(unittest.TestCase):
         result = self.model.collinearity_test()
 
         self.assertEqual(3, len(result.collinear_variables))
+
+    def test_breusch_godfrey_test(self):
+        self.model.fit()
+
+        result = self.model.breusch_godfrey_test()
+
+        self.assertAlmostEqual(0.07163, result.pvalue, places=4)
