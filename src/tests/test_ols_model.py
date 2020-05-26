@@ -84,7 +84,9 @@ class TestOLS(unittest.TestCase):
 
         result = self.model.statistical_significance_of_parameters()
 
-        self.assertAlmostEqual(0.3046, result.variables[2]["pvalue"], places=4)
+        self.assertAlmostEqual(
+            0.3046, result.variables[2]["p_value"], places=4
+        )
         self.assertFalse(result.is_passing)
 
     def test_r_squared_significance_high_palue(self):
@@ -93,14 +95,14 @@ class TestOLS(unittest.TestCase):
 
         result = model.r_squared_significance()
 
-        self.assertAlmostEqual(0.014102, result.pvalue, places=4)
+        self.assertAlmostEqual(0.014102, result.p_value, places=4)
 
     def test_r_squared_significance_low_pvalue(self):
         self.model.fit()
 
         result = self.model.r_squared_significance()
 
-        self.assertAlmostEqual(0, result.pvalue, places=4)
+        self.assertAlmostEqual(0, result.p_value, places=4)
 
     def test_model_coincidence(self):
         self.model.fit()
@@ -108,29 +110,27 @@ class TestOLS(unittest.TestCase):
         result = self.model.model_coincidence()
 
         self.assertEqual(2, len(result.coincidence_errors))
-        self.assertTrue(dict(variable="pr") in result.coincidence_errors)
-        self.assertTrue(dict(variable="i") in result.coincidence_errors)
 
     def test_jarque_bera_test(self):
         self.model.fit()
 
         result = self.model.jarque_bera_test()
 
-        self.assertAlmostEqual(0.240498, result.pvalue, places=4)
+        self.assertAlmostEqual(0.240498, result.p_value, places=4)
 
     def test_runs_test(self):
         self.model.fit()
 
         result = self.model.runs_test()
 
-        self.assertAlmostEqual(0.390826, result.pvalue, places=4)
+        self.assertAlmostEqual(0.390826, result.p_value, places=4)
 
     def test_chow_test(self):
         self.model.fit()
 
         result = self.model.chow_test()
 
-        self.assertAlmostEqual(0.33407, result.pvalue, places=4)
+        self.assertAlmostEqual(0.33407, result.p_value, places=4)
 
     def test_collinearity_test(self):
         self.model.fit()
@@ -144,18 +144,30 @@ class TestOLS(unittest.TestCase):
 
         result = self.model.breusch_godfrey_test()
 
-        self.assertAlmostEqual(0.07163, result.pvalue, places=4)
+        self.assertAlmostEqual(0.07163, result.p_value, places=4)
 
     def test_breusch_pagan_test(self):
         self.model.fit()
 
         result = self.model.breusch_pagan_test()
 
-        self.assertAlmostEqual(0.6593, result.pvalue, places=4)
+        self.assertAlmostEqual(0.6593, result.p_value, places=4)
 
     def test_ramsey_reset(self):
         self.model.fit()
 
         result = self.model.ramsey_reset()
 
-        self.assertAlmostEqual(0.0186, result.pvalue, places=4)
+        self.assertAlmostEqual(0.0186, result.p_value, places=4)
+
+    def test_get_prediction_errors(self):
+        self.model.fit()
+
+        result = self.model.get_prediction_errors(
+            self.df[20:30].to_numpy(), self.y[20:30].to_numpy()
+        )
+
+        self.assertAlmostEqual(0.52996, result.me, places=4)
+        self.assertAlmostEqual(3.81743, result.mae, places=4)
+        self.assertAlmostEqual(4.46926, result.rmse, places=4)
+        self.assertAlmostEqual(7.74826, result.mape, places=4)

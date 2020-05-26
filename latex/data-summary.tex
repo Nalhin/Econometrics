@@ -3,19 +3,18 @@
 \subsection{Pochodzenie}\label{subsec:pochodzenie}
 Dane pochodzą z serwisu Keggle\cite{berlin-airbnb-data}.
 Zostały one zebrane na podstawie ofert wystawionych na serwisie Airbnb dnia 7 listopada 2018 roku.
-Pozyskiwanie danych do zbioru odbyło się za pomocom technologi do webscrappingu.
+Pozyskiwanie zostały za pomocom technologi do webscrappingu.
 Proces ten polega na pobraniu kodu HTML strony internetowej i przeparsowanie odpowiednich znaczników do postaci pliku csv.
-Z uwagi na specyfikacje serwisu Airbnb, niektóre oferty mogą zawierać nieprawdziwe dane.
-Skrajne i typowo bezsensowne wartości zostaną usunięte i nie beda prane pod uwagę przy dalszej analizie.
 
 \subsection{Czyszczenie danych - Reguła Trzech Sigm}\label{subsec:czyszczenie-danych-reguła-trzech-sigm}
 
 Z uwagi na specyfikacje pozyskania danych (występowanie błedów ludzkich) zdecydowałem sie na wykorzystanie reguły trzech sigm podczas czyszczenia danych.
-Reguła trzech sigm dla danego rozkładu normalnego \(\mu , \sigma\) oznacza, że w przedziale \([\mu - 3\sigma ,\mu + 3\sigma ] \) znajduję się 99.7 \% wszystkich obserwacji.
+Reguła trzech sigm dla danego rozkładu normalnego \(N(\mu , \sigma)\) oznacza, że w przedziale \([\mu - 3\sigma ,\mu + 3\sigma ] \) znajduję się 99.7 \% wszystkich obserwacji.
 Odstające (okolo 1500) obserwacje zostały usunięte z dalszej analizy.
 
-\subsection{Problem braku danych}\label{subsec:problem-braku-danych}
-W modelu znajdowała się niewielka ilość braków (okolo 50). Z uwagi na duża liczbe badanych obserwacji, braki zostały wyrzucone z dalszej analizy.
+\subsection{Braki danych}\label{subsec:problem-braku-danych}
+W modelu znajdowała się niewielka ilość braków (okolo 50).
+Z uwagi na duża liczbę badanych obserwacji, braki zostały wyrzucone z dalszej analizy.
 
 \subsection{Zmienne}\label{subsec:zmienne}
 
@@ -23,10 +22,7 @@ W modelu znajdowała się niewielka ilość braków (okolo 50). Z uwagi na duża
 
 \subsubsection{Price}\label{subsubsec:price}
 Zmienna objaśniana w modelu.
-Jest to cena za wynajem (w dolarach) na okres jednej doby.
-Zmienne z wartościami zerowymi i abstrakcyjnie dużymi wartościami (siegające nawet 900\$) zostały uznane za outliery, a następnie usunięte z modelu.
-Jako górna granice uznałem 500 \$.
-W ten sposób z modelu zostały usunięte 82 obserwacje.
+Określa ona cene za wynajem (w dolarach) na okres jednej doby.
 
 
 \customtable{Price}
@@ -35,13 +31,14 @@ W ten sposób z modelu zostały usunięte 82 obserwacje.
 Wnioski
 
 \begin{itemize}
-    \item Z uwagi na wysoką dodatnią wartość skośności, jak rożnież różnic miedzy średnia, a mediana, można zauważyć, ze wykres jest mocno przsunięty w prawo, a zatem zawiera skrajnie wysokie wartości
+    \item Wysoka skośnośc oznacza, że ceny są przesunięte w prawo.
     \item Wysoka kurtoza może oznaczać występowanie dodatnich outlierow (widoczne na wykresie), jednak z uwagi na specyfikacje zmiennej (na Airbnb można wynajmować nawet apartamenty), takowe nie bedą usuwane.
     \item Zmienna ma wariacje na wysokim poziomie, może to wynikać z dużych róznic ceny mieszkań zależnie od ich wielkości (i ilości osób mogących się w takowym zmieścić).
 \end{itemize}
 
 \subsubsection{Number of Reviews}\label{subsubsec:number-of-reviews}
 Zmienna objaśniająca w modelu.
+Określa ilość ocen pod ogłoszeniem. Oznacza to wysoką popularnościa danego miejsca jak również wysokie standardy, gdyż ludzie wystawiają częsciej przychylne oferty niż negatywne.
 
 \customtable{NumberOfReviews}
 
@@ -50,11 +47,14 @@ Zmienna objaśniająca w modelu.
 Wnioski
 
 \begin{itemize}
-    \item
+    \item Większość ofert ma niską ilośc opini, jednak rekordziści osiągają ich ponad 120.
+    \item Oferty bez opini sa nieliczne.
+    Należy pamiętać, że na tego typu serwisie można w sztuczny sposób zwiększyć ilość opinii (np prosząc znajomych).
 \end{itemize}
 
 \subsubsection{Minimum nights}\label{subsubsec:minimum-nights}
 Zmienna objaśniająca w modelu.
+Opisuje na jaki jest minimalny czas wynajmu danej nieruchomości.
 
 \customtable{MinimumNights}
 
@@ -63,11 +63,15 @@ Zmienna objaśniająca w modelu.
 Wnioski
 
 \begin{itemize}
-    \item
+    \item Większość ofert wymaga wynajmu na minimum 3 dni.
+    Wiąże się to z kosztami jakie ponosi wynajmujący w sytuacji zmiany wynajmującego (np sprzątanie).
+    \item Skrajne obserwacje to najprawdopodobniej oferty normalnego wynajmu (nie krotkoterminowego) szukających rozgłosu poprzez umieszczenie ich na Airbnb.
 \end{itemize}
 
 \subsubsection{Bathrooms}\label{subsubsec:bathrooms}
 Zmienna objaśniająca w modelu.
+Określa ilość toalet w danej nieruchomości.
+Jest to zmienna typu skokowego.
 
 \customtable{Bathrooms}
 
@@ -76,11 +80,16 @@ Zmienna objaśniająca w modelu.
 Wnioski
 
 \begin{itemize}
-    \item
+    \item Kurtoza osiąga olbrzymią wartość.
+    Oznacza to ze znacza część ofert ma własnie jedna toalete.
+    W większości mieszkań wprowadzenie dodatkowej toalety wiązałoby się ze zmniejszeniem ilości pokoi, a co za tym idzie zysków.
+    \item Oferty ze skrajnie duża ilościa toalet pochodza najprawdopodobniej z hoteli.
 \end{itemize}
 
 \subsubsection{Bedrooms}\label{subsubsec:bedrooms}
 Zmienna objaśniająca w modelu.
+Opisuje ile oddzielnych sypialni zostanie powierzone wynajmującemu.
+Należy zauważyc, że jest to zmienna typu skokowego.
 
 \customtable{Bedrooms}
 
@@ -89,11 +98,16 @@ Zmienna objaśniająca w modelu.
 Wnioski
 
 \begin{itemize}
-    \item
+    \item Wysoka kurtoza oznacza silne zgrupowanie ofert wśrod środka (1 pokoju).
+    \item Z macierzy korelacji możemy zauważyc silne powiązanie tej zmiennej ze zmienna Accommodates - większość pokoi jest traktowana jako sypialnie.
 \end{itemize}
 
 \subsubsection{Availability 365}\label{subsubsec:availability-365}
 Zmienna objaśniająca w modelu.
+Opisuje ile dni w roku własciciel jest gotów wynajmować daną nieruchomość.
+Wartość 0 oznacza, że własciciel w tym momencie nie chce wynajmować mieszkania (zamrożenie ogłoszenia).
+Ustawienie takiej wartości oznacza, że nie można wynająć danej nieruchomości, ale ogloszenie wciąż jest dostępne.
+Może to się wiązać z przejściem użytkownika na inna forme inwestycji lub próbe poprawienia jakości mieszkania, przed ponownym wystawieniem oferty.
 
 \customtable{Availability365}
 \customboxplot{Availability365}
@@ -101,11 +115,16 @@ Zmienna objaśniająca w modelu.
 Wnioski
 
 \begin{itemize}
-    \item
+    \item Ponad połowa ogloszeń jest w stanie zamrożonym.
+    Wynika to najprawdopodobniej z okresu zebrania danych (listopad) i może wiązać się np z chęcią podwyższenia cen na świeta, albo ogólnym brakiem zainteresowania wynajmem w tym okresie.
+    \item Zmienna posiada bardzo duża wariancje.
+    Wynika to z róznych rodzajów ofert na serwisie.
+    Niektore są wystawiane przez duże firmy, a niektóre przez małych inwestorów (np ktoś wynajmuje część swojego domu).
 \end{itemize}
 
 \subsubsection{Accommodates}\label{subsubsec:accommodates}
 Zmienna objaśniająca w modelu.
+Określa dla ilu osób jest przystosowane mieszkanie (maksymalna liczba).
 
 \customtable{Accommodates}
 
@@ -114,14 +133,19 @@ Zmienna objaśniająca w modelu.
 Wnioski
 
 \begin{itemize}
-    \item
+    \item Większość mieszkań na wynajem jest przystosowana dla 2 osób.
+    Zdaniem Deborah L. Bretta\cite{realestate-market-analysis} tego typu mieszkania są uznawane przez inwestorów za najopłacalniejsze.
+    \item Skrajne obserwacje na wykresie dotyczą najprawdopodobniej wynajmowania przez własciciela całego mieszkania.
 \end{itemize}
 
 \subsubsection{Distance from Center}\label{subsubsec:distance-from-center}
 Zmienna objaśniająca w modelu.
+Określa odleglość rozważanej nieruchomości od centrum Berlina (52.5027778, 13.404166666666667) w kilometrach.
+Zostało obliczone na podstawie wartości Latitude i Longtitude znajdujących sie w zbiorze.
 
 \customplot{DistanceFromCenterPlot}{Rozkład ofert względem centrum miasta}{rozkład-polożenia}
-
+Jak widać z powyższego rysunku, oferty są w równomiernie rozłożone wzgledem centrum.
+Jednak większość najdroższych apartamentów znajduję sie w miare niedaleko od tego punktu.
 \customtable{DistanceFromCenter}
 
 \customboxplot{DistanceFromCenter}
@@ -129,10 +153,21 @@ Zmienna objaśniająca w modelu.
 Wnioski
 
 \begin{itemize}
-    \item
+    \item Niski współczynnik skośności potwierdza, że oferty są w miare równo rozłożone wzgledem centrum.
+    \item Od najdalej położonej nieruchomości na drugi koniec miasta trzeba pokonać prawie 25 km.
 \end{itemize}
 
 \subsubsection{Room Type}\label{subsubsec:room-type}
 Zmienna objaśniająca w modelu.
+Określa jaki rodzaj pokoju jest uwzględniony w ofercie.
 
 \custompiechart{RoomType}
+
+Wnioski
+
+\begin{itemize}
+    \item Ponad połowa ofert dotyczy wynajmu pojedynczych pokoi.
+    Wynika to najprawdopodobniej z tego, że tego typu wynajem jest bardziej dochodowy przy duże ilości pokoi.
+    \item Wspołdzielone pokoje sa mało popularne.
+    Wiaże się to najprawdopodobniej z utrudnieniami w przewidzeniu współlokatorów, a co za tym idzie niską popularnościa tego typu ogloszeń.
+\end{itemize}

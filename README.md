@@ -3,4 +3,4 @@
 
 # Econometrics OLS estimation
 
-
+Ordinary least squares regression with statistical tests, analysis and visualization. 

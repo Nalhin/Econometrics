@@ -1,0 +1,172 @@
+\section{Wybór modelu}\label{sec:wybrany-modelu}
+
+\subsubsection{Podział danych}
+
+Dane zostały podzielone w następujący sposób:
+
+\begin{itemize}
+    \item 90 \% treningowe
+    \item 10 \% testowe
+\end{itemize}
+
+Przy wykorzystaniu gotowego rozwiązania z biblioteki Pythonowej.
+
+\subsubsection{Sposób wyboru}
+
+Podczas wyboru modelu kierowałem się nastepującymi czynnikami
+
+\begin{itemize}
+    \item Maksymalizacja \(R^{2}\)
+    \item Minimalizacja błędów ex-ante
+    \item Poprawność statystyczna
+\end{itemize}
+
+Wybór modelu odbył się poprzez analize każdego możliwego wariantu doboru zmiennych.
+Niestety mimo przeanalizwania wszystkich wariantów (i ich ewentualnych transformacji) nie udało znaleźć się modelu, który pomyślnie przeszedł wszystkie testy statystyczne.
+Postać modelu jest już po przekształceniu na model homoskedastyczny.
+
+
+\section{Postać wybranego modelu}\label{sec:postac-modelu}
+Jest to postać modelu po transformacji celem zlikwidowania heteroskedastyczności.
+W przypadku próby zamiany postaci modelu na np kwadratowy resultaty testów pogarszały się.
+
+\begin{equation}
+    \begin{split}
+        y=-0.45624964184649164const \\ + 53.00011424464533Bedrooms \\ - 18.703573117550555RoomTypeShared room
+    \end{split}
+\end{equation}
+
+\subsection{Wspolczynnik determinacji}\label{subsec:wspolczynnik-determinacji}
+
+Wspolczynnik determinacji w modelu wynosi \(R^{2} = 0.9999962836185184\).
+
+\subsection{Poprawność statystyczna modelu}\label{poprawnośc-statystyczna-modelu}
+
+Model przeszedl poprawnie 9 na 11 testów.
+
+\subsubsection{Efekt katalizy}\label{efekt-katalizy}
+
+
+Brak zjawiska katalizy
+
+\subsubsection{Istność statystyczna parametrow}\label{istotność-parametrów}
+
+const
+\begin{equation}
+    \begin{split}
+        &p-value= 1.4394961682323053e-57 \\ &t = -16.04704840214771  \\
+    \end{split}
+\end{equation}
+
+RoomTypeSharedRoom
+\begin{equation}
+    \begin{split}
+        &p-value= 2.222383942183182e-65  \\ &t = -17.142757081665643 \\
+    \end{split}
+\end{equation}
+
+
+Bedrooms
+\begin{equation}
+    \begin{split}
+         &p-value= 0.0  \\ &t = 71312.96528547468 \\
+    \end{split}
+\end{equation}
+
+
+\subsubsection{Koincydencja}\label{koincydencja}
+
+Model jest koincydentny
+
+
+\begin{equation}
+    \begin{split}
+        &\alpha_1= 53.00011424464533  \\ &r_1 = 0.9999981129146659  \\
+        &\alpha_2= -18.703573117550555  \\ &r_2 = -0.0025894676082915645  \\
+    \end{split}
+\end{equation}
+
+
+\subsubsection{Istotność statystyczna współczynnika determinacji}\label{istotnosc-statystyczna-wspolczynnika-determinacji}
+
+\begin{equation}
+    \begin{split}
+        &F= 2542786559.2096515 \\  &p-value = 0.0
+    \end{split}
+\end{equation}
+
+Współczynnik determinacji jest istotny.
+
+\subsubsection{Normalność reszt}\label{normalnosc-reszt}
+
+\begin{equation}
+    \begin{split}
+        &JB=436502107.97198707 \\ &p-value = 0.0
+    \end{split}
+\end{equation}
+
+Test Jarque-Bera nie potwierdza normalności reszt.
+Niezaleznie od wyniku tego testu można powołac sie na twierdzenie graniczne.
+
+
+\subsubsection{Stabilnosc postaci analitycznej}\label{stabilnosc-postaci-analitycznej}
+
+Test Ramseya RESET
+\begin{equation}
+    \begin{split}
+        &F = 7546.829969968404 \\ &p-value = 0.0
+    \end{split}
+\end{equation}
+
+Postać modelu nie jest stabilna.
+
+\subsubsection{Liniowość modelu}\label{liniowosc-modelu}
+Test liczby serii
+\begin{equation}
+    \begin{split}
+        &Z = -134.27980839321282 \\ &p-value = 0.0
+    \end{split}
+\end{equation}
+
+Postać modelu nie jest liniowa.
+
+
+\subsubsection{Współliniowość}\label{współliniowość}
+
+W modelu nie występuje współliniowość.
+
+\subsubsection{Autokorelacja składnika losowego}\label{autokorelacja-składnika-losowego}
+Test Breuscha-Godfreya
+\begin{equation}
+    \begin{split}
+        &\chi^{2}= 0.05347663492978216 \\ &p-value =0.8171204664638051
+    \end{split}
+\end{equation}
+
+Brak autokorelacji I rzędu.
+
+\subsubsection{Homoskedastyczność}
+Test Breuscha-Pagana
+\begin{equation}
+    \begin{split}
+        &LM=0.15303357608376977 \\  &p-value = 0.926337362767837
+    \end{split}
+\end{equation}
+
+Reszty są homoskedastyczne.
+
+\newpage
+
+\section{Prognoza}\label{sec:prognoza}
+
+Błędy prognozy modelu prezentują wyglądają następująco (dla danych testowych).
+
+\begin{equation}
+    \begin{split}
+        &ME = -0.6606837119514631 \\
+        &MAE = 28.85512409962552 \\
+        &RMSE = 42.97309038468132
+    \end{split}
+\end{equation}
+
+Jak widać model nie jest aż tak skuteczny dla danych testowych jak wskazuje na to współczynnik determinacji.

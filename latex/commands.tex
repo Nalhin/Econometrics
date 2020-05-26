@@ -1,6 +1,5 @@
 \newcommand{\customboxplot}[1]{
     \begin{figure}[H]
-%        \advance\leftskip-2cm
         \center
         \import{generated/}{#1BoxPlot.pgf}
         \caption{Wykres pudelkowy zmiennej \textbf{#1}}
@@ -18,8 +17,6 @@
 
 \newcommand{\customplot}[3]{
     \begin{figure}[H]
-%        \advance\leftskip-2cm
-%        \center
         \import{generated/}{#1.pgf}
         \caption{#2}
         \label{fig:plot-#3}

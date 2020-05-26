@@ -57,8 +57,8 @@ class OLSEstimator:
         self.df = df
 
     def split(self):
-        df = pd.get_dummies(self.df, drop_first=True)
-        self.df = df.dropna()
+        df = pd.get_dummies(self.df, drop_first=True, prefix_sep="")
+        df = df.dropna()
         y = df.pop("Price")
         (
             self.x_train,
@@ -81,10 +81,34 @@ class OLSEstimator:
             model = OLS(self.x_train[list(com)], self.y_train)
             model.fit()
             try:
-                self.models.append(ModelSummary(model.validate(), list(com)))
+                summary = ModelSummary(
+                    model.get_validation_results(),
+                    list(com),
+                    model.a,
+                    model.get_prediction_errors(
+                        self.x_test[list(com)].to_numpy(),
+                        self.y_test.to_numpy(),
+                    ),
+                    model.rsquare,
+                )
+                if not model.breusch_pagan_test().is_passing:
+                    model.transform_heteroskedacity()
+                    model.fit()
+                    summary = ModelSummary(
+                        model.get_validation_results(),
+                        list(com),
+                        model.a,
+                        model.get_prediction_errors(
+                            self.x_test[list(com)].to_numpy(),
+                            self.y_test.to_numpy(),
+                        ),
+                        model.rsquare,
+                    )
+                    if model.breusch_pagan_test().is_passing:
+                        self.models.append(summary)
+                else:
+                    self.models.append(summary)
             except Exception as e:
                 print(e)
-        with open("summary.txt", "w") as text_file:
-            for model in self.models:
-                print(model.to_string())
-                text_file.write(model.to_string())
+        for model in self.models:
+            model.to_latex()

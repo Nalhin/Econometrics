@@ -9,13 +9,13 @@ Metoda najmniejszych kwadratów służy do estymacji parametrów w modelu ekonom
 
 \begin{itemize}
     \item Zmienne objaśniające są nielosowe i nieskorelowane ze składnikiem losowym
-    \item \[E(\varepsilon) = 0\]
-    \item \[Var(\varepsilon) = \sigma^2 \iota\]
-    \item \[rank(X) = (k+1) <n\]
+    \item \(\varepsilon = 0\)
+    \item \(Var(\varepsilon) = \sigma^2 \iota \)
+    \item \(rank(X) = (k+1) <n\)
 \end{itemize}
 
 \subsection{Twierdzenie Gaussa-Markowa}\label{subsec:twierdzenie-gaussa-markowa}
-Przy spełnieniu założeń MNK estymator jest BLUE
+Przy spełnieniu odpowiednich założeń estymator  MNK jest BLUE.
 \begin{itemize}
     \item \textbf{B}est
     \item \textbf{L}inear
@@ -46,7 +46,7 @@ Gdzie H oznacza integralną pojemność informacyjną zmiennych objaśniających
 Mowimy, że zmienna jest koincydentna, jeżeli:
 
 \begin{equation}
-    sgn(r_1) = sign(a_i)
+    sgn(r_i) = sgn(a_i)
 \end{equation}
 
 Koincydencja jest zjawiskiem porządanym w modelu.
@@ -63,7 +63,7 @@ Test ten pozwala sprawdzić istotność wszystkich zmiennych w modelu naraz.
 \end{equation}
 
 Statystyka F-Snedachora ma postać \(F = \frac{R^2}{k} \frac{n-k-1}{1-R^2}\) o \(r_1 = k\) i \(r_2 = n-k-1\) stopniach swobody.
-Jeżeli \(F > F_\alpha,r1,r2 \) to odrzucamy \(H_0\).
+Jeżeli \(F > F_{\alpha,r1,r2} \) to odrzucamy \(H_0\).
 Oznacza to, że przynajmniej jedna zmienna objaśniająca jest statystycznie ważna w modelu.
 
 \subsection{Normalność reszt}\label{subsec:normalność-reszt}
@@ -83,7 +83,7 @@ Test Jarque-Bera polega na obliczeniu skośności oraz kurtozy w modelu i porów
 Statystyke testową wyznaczamy ze wzoru:
 
 \begin{equation}
-    JB = n (\frac{1}{6}B_1 + \frac{1}{24}(B_2 -3)^2)
+    JB = n \left(\frac{1}{6}B_1 + \frac{1}{24}(B_2 -3)^2\right)
 \end{equation}
 
 Gdzie:
@@ -110,8 +110,6 @@ Jeżeli próbę z populacji o sredniej \(\mu\) i skończinym odchyleniu standard
     \end{split}
 \end{equation}
 
-W moim modelu występuje około 20 tysięcy obserwacji, więc przy sprawdzaniu normalności rozkładu można powołać się na to twierdzenie.
-
 \subsection{Istotność statystyczna pojedyńczych zmiennych objaśniających}\label{subsec:istotność-statystyczna-zmiennych-objaśniających}
 Jeżeli spełnione jest założenie o normalności reszt, to możemy postawić następujące hipotezę
 
@@ -124,7 +122,7 @@ Jeżeli spełnione jest założenie o normalności reszt, to możemy postawić n
 
 Statystyka t ma postać \(t = \frac{\alpha j}{S_{\alpha j}}\).
 Jeżeli \(|t| > t_{n -(k+1)}\) to odrzucamy \(H_0\).
-Oznacza to brak wplywu zmiennej \(X_j\) na Y.
+Oznacza to, że zmienna \(X_{j}\) ma wpływ na zmienną Y.
 
 \subsection{Liniowość modelu - test liczby serii}\label{subsec:liniowość-modelu---test-liczby-serii}
 
@@ -153,8 +151,8 @@ Gdzie
     \begin{split}
         &N_+ - \text{ilość dodatnich elementów} \\
         &N_- - \text{ilość ujemnych elementów} \\
-        &N - text{ilość elementów} \\
-        &R - text{ilość serii} \\
+        &N - \text{ilość elementów} \\
+        &R - \text{ilość serii} \\
     \end{split}
 \end{equation}
 
@@ -165,13 +163,13 @@ Jeżeli \(|Z| > Z_{1-\alpha/2}\) to odrzucamy \(H_0\).
 
 \begin{equation}
     \begin{split}
-        &H_0: \text{wybór postaći analitycznej modelu jest prawidłowy} \\
-        &H_1: \text{wybór psotaci analitycznej modelu nie jest prawidłowy}
+        &H_0: \text{wybór postaci analitycznej modelu jest prawidłowy} \\
+        &H_1: \text{wybór postaci analitycznej modelu nie jest prawidłowy}
     \end{split}
 \end{equation}
 
 
-Szacujemy paramert modelu
+Szacujemy paramerty modelu
 \begin{equation}
     \begin{split}
         &y_{t} = \beta_{0} + \beta_{1}x_{1t} + \dots + \beta_{k}x_{kt} +\beta{k+1}ŷ_{t}^{2} + \beta_{k+2}ŷ_{t}^{3} + \mu_{t}
@@ -182,11 +180,11 @@ Wyznaczamy statystyke testowa
 
 \begin{equation}
     \begin{split}
-        F = \frac{R_{II}^{2} - R{I}^{2}}{1-R{II}} * \frac{n-k-3}{2}
+        F = \frac{R_{II}^{2} - R_{I}^{2}}{1-R_{II}} \frac{n-k-3}{2}
     \end{split}
 \end{equation}
 
-Statystyka F ma rozklad F-Snedachora o \(r_1=2 \) i \(r_2=n-k-3\)
+Statystyka F ma rozklad F-Snedachora o \(r_1=2 \) i \(r_2=n-k-3\) stopniach swobody.
 
 \subsection{Stabilność parametrów modelu - test Chowa}\label{subsec:stabilność-parametrów-modelu}
 
@@ -271,8 +269,7 @@ Dla dużej liczby obserwacji \((n > 30)\) statystyka testowa ma rozkład \(\chi^
 \subsection{Heteroskedastyczność składnika losowego - test Breuscha-Pagana}\label{subsec:heteroskedastyczność-składnika-losowego}
 
 Występowanie heteroskedastycznośc w modelu sprawia, że składniki losowe mimo braku wzjemnej koleracji maja rózne wariacje, co jest niezgodne z założeniami MNK.
-Estymator parametrów wyestymowany w sytuacji wystepowania heteroskedastyczności nie jest najefektywniejszy.
-
+Estymator parametrów wyestymowany w sytuacji występowania heteroskedastyczności nie jest najefektywniejszy.
 
 \begin{equation}
     \begin{split}
@@ -303,9 +300,9 @@ Dla dużej liczby obserwacji \((n > 30)\) statystyka testowa ma rozkład \(\chi^
 
 \subsection{Korekta heteroschedastyczności}\label{subsec:korekta-heteroschedastyczności---transformacja-modelu}
 
-Problem heteroschedastyczności można czasem zlikwidować prostą korekta.
+Problem heteroschedastyczności można czasem zlikwidować prostą korektą.
 
-Zakladamy, że szacujemy parametry modelu
+Załóżmy, że szacujemy parametry modelu:
 
 \begin{equation}
     \begin{split}
@@ -313,7 +310,7 @@ Zakladamy, że szacujemy parametry modelu
     \end{split}
 \end{equation}
 
-Następnie zakładamy, że zmienna \( X_{3}\), jest tą, która powoduje zmiany w wariancji składnika losowego wprost proporcjonalne do swojej wartości
+Następnie załóżmy, że zmienna \( X_{3}\), jest tą, która powoduje zmiany w wariancji składnika losowego wprost proporcjonalne do swojej wartości
 
 \begin{equation}
     \begin{split}
@@ -322,7 +319,7 @@ Następnie zakładamy, że zmienna \( X_{3}\), jest tą, która powoduje zmiany 
 \end{equation}
 
 Zatem składnik losowy \( \frac{\varepsilon_{i}}{\sqrt{X_{3i}}}\) ma stałą wariacje \(\sigma^{2}\).
-Wynika z tego, że można przeprowadzić transformacje modelu w model homoskedastyczny czyli
+Wynika z tego, że można przeprowadzić transformacje modelu w model homoskedastycznej czyli
 
 \begin{equation}
     \begin{split}
@@ -332,14 +329,28 @@ Wynika z tego, że można przeprowadzić transformacje modelu w model homoskedas
 
 \subsection{Uogólniona metoda najmniejszych kwadratów}\label{subsec:uogólniona-metoda-najmniejszych-kwadratów}
 
-W przypadku występowania autokorekacji lub heteroskedastyczności skłądnika losowego można zastosować uogólniona metode najmniejszych kwadratów (UMNK).
+W przypadku występowania autokorekacji I rzędu lub heteroskedastyczności skłądnika losowego można zastosować uogólniona metode najmniejszych kwadratów (UMNK).
 W metodzie tej czwarte założenie MNK przybiera postać \(D^{2}(\varepsilon) = \sigma_{2}V \), gdzie V jest macierzą symetryczną dodatnie określona.
 
-Wartości UMNK
+\smallskip
+
+Estymator wektora parametrów
 \begin{equation}
     \begin{split}
-        &a = (X^{T}V_{-1}X)^{-1} X^{T}V^{-1}y \\
+        &a = (X^{T}V^{-1}X)^{-1} X^{T}V^{-1}y \\
+    \end{split}
+\end{equation}
+
+Estymator wariancji składnika losowego
+\begin{equation}
+    \begin{split}
         &S^{2} = \frac{e^{T}V^{-1}e}{n-k-1} \\
+    \end{split}
+\end{equation}
+
+Estymator macierzy kowariancji estymatorów
+\begin{equation}
+    \begin{split}
         &D^2(a) = S^2(X^{T}V^{-1}X)^{-1}
     \end{split}
 \end{equation}
@@ -348,9 +359,12 @@ W przypadku występowania procesu autokorelacji I rzędu składnika losowego \(V
 
 \begin{equation}
     \begin{split}
-        &V_{-1} = \frac{1}{1-p^{2}} \begin{bmatrix}
-                                        1 & 2 & 3\\
-                                        a & b & c
+        &V^{-1} = \frac{1}{1-p^{2}} \begin{bmatrix}
+                                        1 & \rho & 0 & 0 & \dots & 0 & 0\\
+                                        -\rho & 1+\rho^{2} & -\rho & 0 & \dots & 0 & 0 \\
+                                        0 & -\rho & 1 + \rho^{2} & -\rho & \dots & 0 & 0 \\
+                                        \dots & \dots & \dots & \dots & \dots & \dots & \dots \\
+                                        0 & 0 & 0 & 0 & \dots & -\rho & 1 \\
         \end{bmatrix}
     \end{split}
 \end{equation}
@@ -364,7 +378,7 @@ Dla heteroskedastycznego składnika losowego macierz kowariacnji mozna zapisać 
         \begin{bmatrix}
             \sigma_{1}^{2} & 0 & \dots & 0\\
             0 & \sigma_{2}^{2} & \dots & 0\\
-            \dots & \dots & \dots & \dots\\
+            \dots & \dots & \dots & \dots \\
             0 & 0 & \dots & \sigma_{n}^{2}
         \end{bmatrix}
         =
@@ -373,8 +387,8 @@ Dla heteroskedastycznego składnika losowego macierz kowariacnji mozna zapisać 
             \omega_{1} & 0 & \dots  & 0\\
             0 & \omega_{2} & \dots  & 0\\
             \dots & \dots & \dots & \dots\\
-            0 & 0 & \dots \omega_{n}
-        \end{bmatrix} //
+            0 & 0 & \dots & \omega_{n}
+        \end{bmatrix}
     \end{split}
 \end{equation}
 
@@ -383,10 +397,18 @@ Zatem
 \begin{equation}
     \begin{split}
         &V^{-1} = \begin{bmatrix}
-                      \frac{1}{\omega_{1}} & 0 & \dots 0\\
-                      0 & \frac{1}{\omega_{2}} & \dots 0\\
+                      \frac{1}{\omega_{1}} & 0 & \dots & 0\\
+                      0 & \frac{1}{\omega_{2}} & \dots & 0\\
                       \dots & \dots & \dots & \dots\\
-                      0 & 0 & \dots \frac{1}{\omega_{n}}
+                      0 & 0 & \dots & \frac{1}{\omega_{n}}
         \end{bmatrix}
+    \end{split}
+\end{equation}
+
+Ponieważ macierz V nie jest znana, do korekty można wykorzystać estymatory:
+\begin{equation}
+    \begin{split}
+        &\sigma^{2} =1 \\
+        &\sigma_{t}^{2} = e_{t}^{2}
     \end{split}
 \end{equation}
